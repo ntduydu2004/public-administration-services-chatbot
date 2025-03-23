@@ -1,0 +1,12 @@
+langchain==0.0.319
+uvicorn[standard]
+python-multipart
+psycopg2-binary
+python-dotenv
+fastapi[all]
+SQLAlchemy==1.4.50
+pgvector
+tiktoken
+aiofiles
+sqlmodel==0.0.10
+openai==0.28.1
