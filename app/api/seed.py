@@ -38,6 +38,7 @@ organizations = [
                 'display_name': 'Vietnamese national public service portal (portal)',
                 'docs': [
                     'org-about_the_portal.md',
+                    'org-about_the_portal_vietnamese.md',
                     'org-layout_of_the_portal.md',
                     'org-usage_instructions.md'
                 ]
