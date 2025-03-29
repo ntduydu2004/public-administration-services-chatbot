@@ -1,25 +1,20 @@
-# Usage instructions for the Vietnamese national public service portal
+# HƯỚNG DẪN SỬ DỤNG CỔNG DỊCH VỤ CÔNG QUỐC GIA
 
-Title: Usage Instructions
+Tiêu đề: Hướng dẫn sử dụng
 
-**General instructions for performing online public services**
-There are 4 main steps to perform an online public service:
+**Hướng dẫn chung**
+Bao gồm 4 bước để thực hiện 1 thủ tục hành chính, dịch vụ công trực tuyến trên Cổng Dịch vụ công Quốc gia:
 
-Step 1: *Search for administrative procedures and public services*
-Citizens and businesses have 3 ways to access administrative procedures and public services, which are:
-- Search by keywords on the homepage, citizen page, and business page
-- Select administrative procedures from citizen and business events
-- Select from the list of online public services
+Bước 1: Tra cứu thủ tục hành chính, dịch vụ công
+Người dân, doanh nghiệp có 3 cách để tiếp cận thủ tục hành chính, dịch vụ công, đó là: Tìm kiếm theo từ khóa ở trang chủ, trang công dân, trang doanh nghiệp; chọn thủ tục hành chính từ sự kiện của công dân, doanh nghiệp; chọn từ danh sách dịch vụ công trực tuyến
 
-Step 2: *Select the Implementing Agency*
-Based on the 'Implementing Agency' in the administrative procedure information, citizens and businesses select the corresponding agency to carry out the procedure.
+Bước 2: Chọn cơ quan thực hiện
+Căn cứ vào “Cơ quan thực hiện” trong thông tin thủ tục hành chính, người dân, doanh nghiệp chọn cơ quan thực hiện tương ứng của thủ tục cần thực hiện
 
-Step 3: *Citizen and Business Account Registration and Login*
-Citizens and businesses can register an account using one of the following methods: Digital Signature SIM, Digital Signature USB, Mobile Subscription (for Citizens), or Social Insurance Code (for Citizens).
+Bước 3: Đăng ký, đăng nhập tài khoản công dân, doanh nghiệp
+Người dân, doanh nghiệp có thể đăng ký tài khoản bằng: Sim ký số; USB ký số; Thuê bao di động (Dành cho Công dân); Mã số BHXH (Dành cho Công dân)
+Sau khi đăng ký tài khoản, Người dân, doanh nghiệp đăng nhập bằng 1 trong các cách sau: Sim ký số; USB ký số; CMT/CCCD.
 
-After registering an account, citizens and businesses can log in using one of the following methods: Digital Signature SIM, Digital Signature USB, or ID Card/Citizen ID.
-
-Step 4: *Submit Applications, Lookup, and Track Application Status*
-After successfully logging in, citizens and businesses will be redirected by the National Public Service Portal to the Ministry/Agency/Local Authority portal where they registered to carry out the procedure and submit their application.
-
-Citizens and businesses can check the status of their application using the assigned application code on the National Public Service Portal. To view detailed processing progress and manage input/output data of the application, users must log in.
+Bước 4: Nộp hồ sơ, tra cứu, theo dõi tình trạng hồ sơ
+Sau khi Người dân, doanh nghiệp đăng nhập thành công, Cổng Dịch vụ công Quốc gia sẽ điều hướng về Cổng của Bộ/Ngành/Địa phương nơi mà người dân, doanh nghiệp đăng ký thực hiện thủ tục để nộp hồ sơ.
+Người dân, doanh nghiệp tra cứu tình trạng hồ sơ theo mã số hồ sơ được cấp trên Cổng Dịch vụ công Quốc gia, để theo dõi chi tiết tiến trình xử lý, quản lý dữ liệu đầu vào, đầu ra của hồ sơ thì người dân thực hiện đăng nhập để xem chi tiết.
