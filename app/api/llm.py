@@ -38,6 +38,7 @@ from models import (
     Node,
     ChatSession,
     ChatSessionResponse,
+    TrimmedConversationBufferMemory,
     get_engine
 )
 from config import (
@@ -57,6 +58,9 @@ from config import (
     logger
 )
 
+from langchain.chains import ConversationChain
+
+chat_history: Dict[str, TrimmedConversationBufferMemory] = {}
 
 # -------------
 # Query the LLM
@@ -144,6 +148,31 @@ def chat_query(
     arr_query, embeddings = get_embeddings(query_str)
 
     query_embeddings = embeddings[0]
+    
+    # ----------------
+    # Get user details
+    # ----------------
+    user = get_user_by_uuid_or_identifier(
+        identifier, session=session, should_except=False
+    )
+
+    if not user:
+        logger.debug("🚫👤 User not found, creating new user")
+        user_params = {
+            "identifier": identifier,
+            "identifier_type": channel.value
+            if isinstance(channel, CHANNEL_TYPE)
+            else channel,
+        }
+        if user_data:
+            user_params = {**user_params, **user_data}
+
+        user = User.create(user_params)
+    else:
+        logger.debug(f"👤 User found: {user}")
+
+    if user.identifier not in chat_history:
+        chat_history[user.identifier] = TrimmedConversationBufferMemory(memory_key="history")
 
     # ------------------------
     # Search for similar nodes
@@ -209,6 +238,7 @@ def chat_query(
                 model=model,
                 max_output_tokens=max_output_tokens,
                 prefix_messages=system_prompt,
+                user=user,
             )
         )
         tags = llm_response.get("tags", [])
@@ -216,28 +246,9 @@ def chat_query(
         response_message = llm_response.get("message", None)
     else:
         logger.info("🚫📝 No similar nodes found, returning default response")
-
-    # ----------------
-    # Get user details
-    # ----------------
-    user = get_user_by_uuid_or_identifier(
-        identifier, session=session, should_except=False
-    )
-
-    if not user:
-        logger.debug("🚫👤 User not found, creating new user")
-        user_params = {
-            "identifier": identifier,
-            "identifier_type": channel.value
-            if isinstance(channel, CHANNEL_TYPE)
-            else channel,
-        }
-        if user_data:
-            user_params = {**user_params, **user_data}
-
-        user = User.create(user_params)
-    else:
-        logger.debug(f"👤 User found: {user}")
+    
+    chat_history[user.identifier].chat_memory.add_user_message(query_str)
+    chat_history[user.identifier].chat_memory.add_ai_message(response_message)
 
     # -----------------------------------
     # Calculate input and response tokens
@@ -402,6 +413,7 @@ def retrieve_llm_response(
     temperature: Optional[float] = LLM_DEFAULT_TEMPERATURE,
     max_output_tokens: Optional[int] = LLM_MAX_OUTPUT_TOKENS,
     prefix_messages: Optional[List[dict]] = None,
+    user: Optional[User] = None,
 ):
     llm = OpenAI(
         temperature=temperature,
@@ -412,7 +424,13 @@ def retrieve_llm_response(
         prefix_messages=prefix_messages,
     )
     try:
-        result = llm(prompt=query_str)
+        ## result = llm(prompt=query_str)
+        Conversation = ConversationChain(
+            llm=llm,
+            memory=chat_history[user.identifier],
+        )
+        
+        result = Conversation.run(input=query_str)
     except openai.error.InvalidRequestError as e:
         logger.error(f"🚨 LLM error: {e}")
         raise HTTPException(status_code=500, detail=f"LLM error: {e}")
