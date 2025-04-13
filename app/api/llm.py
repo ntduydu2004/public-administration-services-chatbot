@@ -3,7 +3,9 @@ import openai
 import json
 
 from langchain.docstore.document import Document as LangChainDocument
+from langchain.vectorstores.pgvector import PGVector
 from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.schema import Document
 from fastapi import HTTPException
 from uuid import UUID, uuid4
 from langchain.text_splitter import (
@@ -58,6 +60,19 @@ from config import (
 )
 
 
+CONNECTION_STRING = "postgresql+psycopg2://username:password@localhost:5432/db_name"
+
+# Initialize OpenAI Embeddings
+embedding = OpenAIEmbeddings(openai_api_key="your-api-key")
+
+# Create the vector store (table will be auto-created)
+collection_name = "answered_questions"
+vectorstore = PGVector(
+    collection_name=collection_name,
+    connection_string=CONNECTION_STRING,
+    embedding_function=embedding,
+)
+
 # -------------
 # Query the LLM
 # -------------
@@ -80,12 +95,15 @@ def chat_query(
     """
     Steps:
         1. ✅ Clean user input
-        2. ✅ Create input embeddings
-        3. ✅ Search for similar nodes
-        4. ✅ Create prompt template w/ similar nodes
-        5. ✅ Submit prompt template to LLM
-        6. ✅ Get response from LLM
-        7. Create ChatSession
+        2. ✅ Check for cached answer
+        3. ✅ If the answer is found, proceed to step 10
+        4. ✅ Create input embeddings
+        5. ✅ Search for similar nodes
+        6. ✅ Create prompt template w/ similar nodes
+        7. ✅ Submit prompt template to LLM
+        8. ✅ Get response from LLM
+        9. ✅ Store response in vector store
+        10. Create ChatSession
             - Store embeddings
             - Store tags
             - Store is_escalate
@@ -133,89 +151,101 @@ def chat_query(
     logger.debug(f"💬 Query received: {query_str}")
 
     # ----------------
-    # Get token counts
+    # Check for cached answer
     # ----------------
-    query_token_count = get_token_count(query_str)
-    prompt_token_count = 0
+    response_message = None
+    cached_answer = get_cached_answer(query_str)
+    if cached_answer:
+        response_message = cached_answer
+    else:  
+        # ----------------
+        # Get token counts
+        # ----------------
+        query_token_count = get_token_count(query_str)
+        prompt_token_count = 0
 
-    # -----------------------
-    # Create input embeddings
-    # -----------------------
-    arr_query, embeddings = get_embeddings(query_str)
+        # -----------------------
+        # Create input embeddings
+        # -----------------------
+        _, embeddings = get_embeddings(query_str)
 
-    query_embeddings = embeddings[0]
+        query_embeddings = embeddings[0]
 
-    # ------------------------
-    # Search for similar nodes
-    # ------------------------
-    nodes = get_nodes_by_embedding(
-        query_embeddings,
-        node_limit,
-        distance_strategy=distance_strategy
-        if isinstance(distance_strategy, DISTANCE_STRATEGY)
-        else LLM_DEFAULT_DISTANCE_STRATEGY,
-        distance_threshold=distance_threshold,
-        session=session,
-    )
-
-    if len(nodes) > 0:
-        if (not project or not organization) and session:
-            # get document from Node via session object:
-            document = session.get(Node, nodes[0].id).document
-            project = document.project
-            organization = project.organization
-
-        # ----------------------
-        # Create prompt template
-        # ----------------------
-
-        # concatenate all nodes into a single string
-        context_str = "\n\n".join([node.text for node in nodes])
-
-        # -------------------------------------------
-        # Let's make sure we don't exceed token limit
-        # -------------------------------------------
-        context_token_count = get_token_count(context_str)
-
-        # ----------------------------------------------
-        # if token count exceeds limit, truncate context
-        # ----------------------------------------------
-        if (
-            context_token_count + query_token_count + prompt_token_count
-        ) > MODEL_TOKEN_LIMIT:
-            logger.debug("🚧 Exceeded token limit, truncating context")
-            token_delta = MODEL_TOKEN_LIMIT - (query_token_count + prompt_token_count)
-            context_str = context_str[:token_delta]
-
-        # create prompt template
-        system_prompt, user_prompt = get_prompt_template(
-            user_query=query_str,
-            context_str=context_str,
-            project=project,
-            organization=organization,
-            agent=agent_name,
+        # ------------------------
+        # Search for similar nodes
+        # ------------------------
+        nodes = get_nodes_by_embedding(
+            query_embeddings,
+            node_limit,
+            distance_strategy=distance_strategy
+            if isinstance(distance_strategy, DISTANCE_STRATEGY)
+            else LLM_DEFAULT_DISTANCE_STRATEGY,
+            distance_threshold=distance_threshold,
+            session=session,
         )
 
-        prompt_token_count = get_token_count(prompt)
-        token_count = context_token_count + query_token_count + prompt_token_count
+        if len(nodes) > 0:
+            if (not project or not organization) and session:
+                # get document from Node via session object:
+                document = session.get(Node, nodes[0].id).document
+                project = document.project
+                organization = project.organization
 
-        # ---------------------------
-        # Get response from LLM model
-        # ---------------------------
-        # It should return a JSON dict
-        llm_response = json.loads(
-            retrieve_llm_response(
-                user_prompt,
-                model=model,
-                max_output_tokens=max_output_tokens,
-                prefix_messages=system_prompt,
+            # ----------------------
+            # Create prompt template
+            # ----------------------
+
+            # concatenate all nodes into a single string
+            context_str = "\n\n".join([node.text for node in nodes])
+
+            # -------------------------------------------
+            # Let's make sure we don't exceed token limit
+            # -------------------------------------------
+            context_token_count = get_token_count(context_str)
+
+            # ----------------------------------------------
+            # if token count exceeds limit, truncate context
+            # ----------------------------------------------
+            if (
+                context_token_count + query_token_count + prompt_token_count
+            ) > MODEL_TOKEN_LIMIT:
+                logger.debug("🚧 Exceeded token limit, truncating context")
+                token_delta = MODEL_TOKEN_LIMIT - (query_token_count + prompt_token_count)
+                context_str = context_str[:token_delta]
+
+            # create prompt template
+            system_prompt, user_prompt = get_prompt_template(
+                user_query=query_str,
+                context_str=context_str,
+                project=project,
+                organization=organization,
+                agent=agent_name,
             )
-        )
-        tags = llm_response.get("tags", [])
-        is_escalate = llm_response.get("is_escalate", False)
-        response_message = llm_response.get("message", None)
-    else:
-        logger.info("🚫📝 No similar nodes found, returning default response")
+
+            prompt_token_count = get_token_count(prompt)
+            token_count = context_token_count + query_token_count + prompt_token_count
+
+            # ---------------------------
+            # Get response from LLM model
+            # ---------------------------
+            # It should return a JSON dict
+            llm_response = json.loads(
+                retrieve_llm_response(
+                    user_prompt,
+                    model=model,
+                    max_output_tokens=max_output_tokens,
+                    prefix_messages=system_prompt,
+                )
+            )
+            tags = llm_response.get("tags", [])
+            is_escalate = llm_response.get("is_escalate", False)
+            response_message = llm_response.get("message", None)
+            store_answered_question(
+                question=query_str,
+                answer=response_message,
+            )
+        else:
+            logger.info("🚫📝 No similar nodes found, returning default response")
 
     # ----------------
     # Get user details
@@ -349,6 +379,27 @@ def get_token_count(text: str):
 
     return OpenAI().get_num_tokens(text=text)
 
+# ------------------------
+# Get the cached answer
+# ------------------------
+def get_cached_answer(query, threshold=0.8) -> Optional[str]:
+    """
+    Check if the query is already in the vector store and return the cached answer if found.
+    """
+    results = vectorstore.similarity_search_with_score(query, k=1)
+    if results:
+        doc, score = results[0]
+        # Lower score = more similar
+        if score < (1 - threshold):  
+            return doc.metadata["answer"]
+    return None
+
+# ------------------------
+# Store the answered question
+# ------------------------
+def store_answered_question(question: str, answer: str):
+    doc = Document(page_content=question, metadata={"answer": answer})
+    vectorstore.add_documents([doc])
 
 # --------------------------------------------
 # Query embedding search for similar documents

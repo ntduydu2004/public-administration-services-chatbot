@@ -291,3 +291,17 @@ rasa-train:
 	@docker-compose -f docker-compose.yml exec rasa-core rasa train
 	@make rasa-stop
 	@echo "✅ Done\n"
+
+#-------------------
+# Remake database
+#-------------------
+remake:
+	@echo "🔄 Remaking database ..\n"
+	@make db-purge
+	@make rasa-train
+	@make run
+	@make db
+	@make models
+	@make rasa-restart
+	@make seed
+	@echo "✅ Done\n"
