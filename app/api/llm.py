@@ -61,6 +61,7 @@ from config import (
 from langchain.chains import ConversationChain
 
 chat_history: Dict[str, TrimmedConversationBufferMemory] = {}
+chat_history_summary: Dict[str, str] = {}
 
 # -------------
 # Query the LLM
@@ -84,6 +85,7 @@ def chat_query(
     """
     Steps:
         1. ✅ Clean user input
+        1-1. ✅ Get chat summary
         2. ✅ Create input embeddings
         3. ✅ Search for similar nodes
         4. ✅ Create prompt template w/ similar nodes
@@ -131,25 +133,6 @@ def chat_query(
     meta["agent"] = agent_name if agent_name else random.choice(AGENT_NAMES)
 
     # ----------------
-    # Clean user input
-    # ----------------
-    query_str = sanitize_input(query_str)
-    logger.debug(f"💬 Query received: {query_str}")
-
-    # ----------------
-    # Get token counts
-    # ----------------
-    query_token_count = get_token_count(query_str)
-    prompt_token_count = 0
-
-    # -----------------------
-    # Create input embeddings
-    # -----------------------
-    arr_query, embeddings = get_embeddings(query_str)
-
-    query_embeddings = embeddings[0]
-    
-    # ----------------
     # Get user details
     # ----------------
     user = get_user_by_uuid_or_identifier(
@@ -173,7 +156,46 @@ def chat_query(
 
     if user.identifier not in chat_history:
         chat_history[user.identifier] = TrimmedConversationBufferMemory(memory_key="history")
+        
+    if user.identifier not in chat_history_summary:
+        chat_history_summary[user.identifier] = ""
 
+
+    # ----------------
+    # Clean user input
+    # ----------------
+    query_str = sanitize_input(query_str)
+    logger.debug(f"💬 Query received: {query_str}")
+    user_message = f"{query_str}"
+    
+    # ----------------------
+    # Get chat summary
+    # ----------------------
+    if query_str:
+        chat_summary = retrieve_chat_summary(
+            user_id=identifier,
+            query_str=query_str,
+            model=model,
+        )
+        chat_history_summary[identifier] = chat_summary
+    
+    
+    query_str = chat_summary # + query_str
+    logger.debug(f"💬 Query with summary: {query_str}")
+
+    # ----------------
+    # Get token counts
+    # ----------------
+    query_token_count = get_token_count(query_str)
+    prompt_token_count = 0
+
+    # -----------------------
+    # Create input embeddings
+    # -----------------------
+    arr_query, embeddings = get_embeddings(query_str)
+
+    query_embeddings = embeddings[0]
+    
     # ------------------------
     # Search for similar nodes
     # ------------------------
@@ -238,7 +260,7 @@ def chat_query(
                 model=model,
                 max_output_tokens=max_output_tokens,
                 prefix_messages=system_prompt,
-                user=user,
+                ## user=user,
             )
         )
         tags = llm_response.get("tags", [])
@@ -247,7 +269,7 @@ def chat_query(
     else:
         logger.info("🚫📝 No similar nodes found, returning default response")
     
-    chat_history[user.identifier].chat_memory.add_user_message(query_str)
+    chat_history[user.identifier].chat_memory.add_user_message(user_message)
     chat_history[user.identifier].chat_memory.add_ai_message(response_message)
 
     # -----------------------------------
@@ -413,7 +435,7 @@ def retrieve_llm_response(
     temperature: Optional[float] = LLM_DEFAULT_TEMPERATURE,
     max_output_tokens: Optional[int] = LLM_MAX_OUTPUT_TOKENS,
     prefix_messages: Optional[List[dict]] = None,
-    user: Optional[User] = None,
+    ## user: Optional[User] = None,
 ):
     llm = OpenAI(
         temperature=temperature,
@@ -424,13 +446,13 @@ def retrieve_llm_response(
         prefix_messages=prefix_messages,
     )
     try:
-        ## result = llm(prompt=query_str)
-        Conversation = ConversationChain(
-            llm=llm,
-            memory=chat_history[user.identifier],
-        )
+        result = llm(prompt=query_str)
+        ## Conversation = ConversationChain(
+        ##     llm=llm,
+        ##     memory=chat_history[user.identifier],
+        ## )
         
-        result = Conversation.run(input=query_str)
+        ## result = Conversation.run(input=query_str)
     except openai.error.InvalidRequestError as e:
         logger.error(f"🚨 LLM error: {e}")
         raise HTTPException(status_code=500, detail=f"LLM error: {e}")
@@ -471,3 +493,38 @@ def get_embeddings(
     )
 
     return arr_documents, embeddings
+
+def retrieve_chat_summary(
+    user_id: Optional[str] = None,
+    query_str: Optional[str] = None,
+    model: Optional[LLM_MODELS] = LLM_MODELS.GPT_35_TURBO,
+):
+    summariztion: str = ""
+    previous_summary: str = chat_history_summary[user_id]
+    previous_summary = previous_summary if previous_summary else "No previous summary"
+    system_prompt = [
+        {
+            "role": "system",
+            "content": f""":
+You are updating a summary of a conversation. Always answer in Vietnamese.
+Here is the previous summary:
+"{previous_summary}"
+
+Here is the latest user message:
+"{query_str}"
+""",     
+        }
+    ]
+    
+    llm = OpenAI(
+        temperature=0,
+        model_name=model.model_name
+        if isinstance(model, LLM_MODELS)
+        else LLM_MODELS.GPT_35_TURBO.model_name,
+        prefix_messages=system_prompt,
+    )
+    
+    summary_prompt = "Update the summary to include the new message in 1-2 sentences to capture user's intent."
+    summary = "Chat summary: " + llm(prompt=summary_prompt)
+    
+    return summary
