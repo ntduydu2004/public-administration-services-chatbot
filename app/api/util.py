@@ -92,4 +92,3 @@ def sanitize_input(
 
     logger.debug(f'Input: {str_input}')
     return str_input
-

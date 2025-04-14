@@ -97,6 +97,10 @@ def chat_query(
             - Store is_escalate
         8. Return response
     """
+    if query_str == None:
+        raise ValueError("query_str is required")
+        return None
+    
     meta = {}
     agent_name = None
     embeddings = []
@@ -173,11 +177,11 @@ def chat_query(
     # ----------------------
     if query_str:
         chat_summary = retrieve_chat_summary(
-            user_id=identifier,
+            user_id=user.identifier,
             query_str=query_str,
             model=model,
         )
-        chat_history_summary[identifier] = chat_summary
+        chat_history_summary[user.identifier] = chat_summary
     
     
     query_str = chat_summary # + query_str
@@ -260,7 +264,6 @@ def chat_query(
                 model=model,
                 max_output_tokens=max_output_tokens,
                 prefix_messages=system_prompt,
-                ## user=user,
             )
         )
         tags = llm_response.get("tags", [])
@@ -506,11 +509,15 @@ def retrieve_chat_summary(
         {
             "role": "system",
             "content": f""":
-You are updating a summary of a conversation. Always answer in Vietnamese.
-Here is the previous summary:
+You are updating a summary of a conversation. Using the previous summary as a background context. Follow these instructions:
+- Always answer in Vietnamese.
+- Rewrite the summary in a simple sentence so that it accurately reflects the conversation after the new message.
+- If the current message shifts the topic completely, discard the old summary and generate a new one.
+
+Previous summary:
 "{previous_summary}"
 
-Here is the latest user message:
+Current user message:
 "{query_str}"
 """,     
         }
@@ -524,7 +531,7 @@ Here is the latest user message:
         prefix_messages=system_prompt,
     )
     
-    summary_prompt = "Update the summary to include the new message in 1-2 sentences to capture user's intent."
-    summary = "Chat summary: " + llm(prompt=summary_prompt)
+    summary_prompt = "Update the summary to capture users intent."
+    summary = llm(prompt=summary_prompt)
     
     return summary
