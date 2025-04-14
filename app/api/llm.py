@@ -38,6 +38,7 @@ from models import (
     Node,
     ChatSession,
     ChatSessionResponse,
+    TrimmedConversationBufferMemory,
     get_engine
 )
 from config import (
@@ -57,6 +58,10 @@ from config import (
     logger
 )
 
+from langchain.chains import ConversationChain
+
+chat_history: Dict[str, TrimmedConversationBufferMemory] = {}
+chat_history_summary: Dict[str, str] = {}
 
 # -------------
 # Query the LLM
@@ -80,6 +85,7 @@ def chat_query(
     """
     Steps:
         1. ✅ Clean user input
+        1-1. ✅ Get chat summary
         2. ✅ Create input embeddings
         3. ✅ Search for similar nodes
         4. ✅ Create prompt template w/ similar nodes
@@ -91,6 +97,10 @@ def chat_query(
             - Store is_escalate
         8. Return response
     """
+    if query_str == None:
+        raise ValueError("query_str is required")
+        return None
+    
     meta = {}
     agent_name = None
     embeddings = []
@@ -127,10 +137,55 @@ def chat_query(
     meta["agent"] = agent_name if agent_name else random.choice(AGENT_NAMES)
 
     # ----------------
+    # Get user details
+    # ----------------
+    user = get_user_by_uuid_or_identifier(
+        identifier, session=session, should_except=False
+    )
+
+    if not user:
+        logger.debug("🚫👤 User not found, creating new user")
+        user_params = {
+            "identifier": identifier,
+            "identifier_type": channel.value
+            if isinstance(channel, CHANNEL_TYPE)
+            else channel,
+        }
+        if user_data:
+            user_params = {**user_params, **user_data}
+
+        user = User.create(user_params)
+    else:
+        logger.debug(f"👤 User found: {user}")
+
+    if user.identifier not in chat_history:
+        chat_history[user.identifier] = TrimmedConversationBufferMemory(memory_key="history")
+        
+    if user.identifier not in chat_history_summary:
+        chat_history_summary[user.identifier] = ""
+
+
+    # ----------------
     # Clean user input
     # ----------------
     query_str = sanitize_input(query_str)
     logger.debug(f"💬 Query received: {query_str}")
+    user_message = f"{query_str}"
+    
+    # ----------------------
+    # Get chat summary
+    # ----------------------
+    if query_str:
+        chat_summary = retrieve_chat_summary(
+            user_id=user.identifier,
+            query_str=query_str,
+            model=model,
+        )
+        chat_history_summary[user.identifier] = chat_summary
+    
+    
+    query_str = chat_summary # + query_str
+    logger.debug(f"💬 Query with summary: {query_str}")
 
     # ----------------
     # Get token counts
@@ -144,7 +199,7 @@ def chat_query(
     arr_query, embeddings = get_embeddings(query_str)
 
     query_embeddings = embeddings[0]
-
+    
     # ------------------------
     # Search for similar nodes
     # ------------------------
@@ -216,28 +271,9 @@ def chat_query(
         response_message = llm_response.get("message", None)
     else:
         logger.info("🚫📝 No similar nodes found, returning default response")
-
-    # ----------------
-    # Get user details
-    # ----------------
-    user = get_user_by_uuid_or_identifier(
-        identifier, session=session, should_except=False
-    )
-
-    if not user:
-        logger.debug("🚫👤 User not found, creating new user")
-        user_params = {
-            "identifier": identifier,
-            "identifier_type": channel.value
-            if isinstance(channel, CHANNEL_TYPE)
-            else channel,
-        }
-        if user_data:
-            user_params = {**user_params, **user_data}
-
-        user = User.create(user_params)
-    else:
-        logger.debug(f"👤 User found: {user}")
+    
+    chat_history[user.identifier].chat_memory.add_user_message(user_message)
+    chat_history[user.identifier].chat_memory.add_ai_message(response_message)
 
     # -----------------------------------
     # Calculate input and response tokens
@@ -330,8 +366,9 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 - I am a kind and helpful human, the best customer support agent in existence
 - I never lie or invent answers not explicitly provided in [DOCUMENT]
 - If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "I apologize, I'm not sure how to help with that".
-- I always keep my answers short, relevant and concise.
+- I always keep my answers relevant and concise.
 - I will always respond in JSON format with the following keys: "message" my response to the user, "tags" an array of short labels categorizing user input, "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
+- I always answer only in Vietnamese
 """,
         }
     ]
@@ -401,6 +438,7 @@ def retrieve_llm_response(
     temperature: Optional[float] = LLM_DEFAULT_TEMPERATURE,
     max_output_tokens: Optional[int] = LLM_MAX_OUTPUT_TOKENS,
     prefix_messages: Optional[List[dict]] = None,
+    ## user: Optional[User] = None,
 ):
     llm = OpenAI(
         temperature=temperature,
@@ -412,6 +450,12 @@ def retrieve_llm_response(
     )
     try:
         result = llm(prompt=query_str)
+        ## Conversation = ConversationChain(
+        ##     llm=llm,
+        ##     memory=chat_history[user.identifier],
+        ## )
+        
+        ## result = Conversation.run(input=query_str)
     except openai.error.InvalidRequestError as e:
         logger.error(f"🚨 LLM error: {e}")
         raise HTTPException(status_code=500, detail=f"LLM error: {e}")
@@ -452,3 +496,42 @@ def get_embeddings(
     )
 
     return arr_documents, embeddings
+
+def retrieve_chat_summary(
+    user_id: Optional[str] = None,
+    query_str: Optional[str] = None,
+    model: Optional[LLM_MODELS] = LLM_MODELS.GPT_35_TURBO,
+):
+    summariztion: str = ""
+    previous_summary: str = chat_history_summary[user_id]
+    previous_summary = previous_summary if previous_summary else "No previous summary"
+    system_prompt = [
+        {
+            "role": "system",
+            "content": f""":
+You are updating a summary of a conversation. Using the previous summary as a background context. Follow these instructions:
+- Always answer in Vietnamese.
+- Rewrite the summary in a simple sentence so that it accurately reflects the conversation after the new message.
+- If the current message shifts the topic completely, discard the old summary and generate a new one.
+
+Previous summary:
+"{previous_summary}"
+
+Current user message:
+"{query_str}"
+""",     
+        }
+    ]
+    
+    llm = OpenAI(
+        temperature=0,
+        model_name=model.model_name
+        if isinstance(model, LLM_MODELS)
+        else LLM_MODELS.GPT_35_TURBO.model_name,
+        prefix_messages=system_prompt,
+    )
+    
+    summary_prompt = "Update the summary to capture users intent."
+    summary = llm(prompt=summary_prompt)
+    
+    return summary

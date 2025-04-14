@@ -1,0 +1,27 @@
+# Đăng ký kết hôn
+
+Tiêu đề: Đăng ký kết hôn
+
+Mô tả: Hướng dẫn người dân thực hiện thủ tục đăng ký kết hôn.
+
+**Các bước thực hiện**
+
+Bước 1: Truy cập vào Cổng Dịch vụ công Quốc gia tại địa chỉ www.dichvucong.gov.vn.
+Bước 2: Tìm kiếm thủ tục "Đăng ký kết hôn" bằng một trong các cách sau:
+- Cách 1: Nhập từ khóa "Đăng ký kết hôn" vào thanh tìm kiếm nâng cao và nhấn nút "Tìm kiếm".
+- Cách 2: Từ trang chủ, chọn "Hôn nhân và gia đình" ở phần "Công dân", sau đó nhấn vào mục "Kết hôn".
+Bước 3: Chọn loại thủ tục "Đăng ký kết hôn" phù hợp với nhu cầu của bạn.
+Bước 4: Chọn cơ quan thực hiện thủ tục theo chỉ dẫn sau:
+- Trên thanh tìm kiếm cơ quan thực hiện ở phía bên tay phải, chọn tỉnh/thành phố, quận/huyện và phường/xã tương ứng với địa phương của bạn. Sau đó nhấn nút đồng ý. Trên danh sách các cơ quan được tìm thấy, hãy nhấn nút nộp trực tuyến của cơ quan phù hợp.
+Bước 5: Điền đầy đủ thông tin và nộp thủ tục. Sau đó, theo dõi tình trạng hồ sơ của bạn trên cổng dịch vụ công.
+
+**Câu hỏi thường gặp**
+
+1. Tôi muốn lấy vợ cùng xã thì tôi phải làm thế nào, chuẩn bị những giấy tờ gì?
+- Khi làm thủ tục đăng ký kết hôn cần phải nộp tờ khai đăng ký kết hôn theo mẫu thông tư số 05/2015/TT-BTP ngày 16/11/2015 của Bộ Tư pháp quy định chi tiết thi hành một số điều của Luật hộ tịch và Nghị định số 123/2015/NĐ-CP ngày 15/11/2015 của Chính phủ quy định chi tiết một số điều và biện pháp thi hành Luật hộ tịch; xuất trình Hộ chiếu hoặc chứng minh nhân dân hoặc thẻ căn cước công dân hoặc các giấy tờ khác có dán ảnh và thông tin cá nhân do cơ quan có thẩm quyền cấp, còn giá trị sử dụng để chứng minh về nhân thân của anh, chị . Đồng thời, anh, chị phải trực tiếp cùng có mặt khi đăng ký kết hôn và ký tên vào Sổ hộ tịch.
+
+2. Tôi và chồng tôi quê tại Nam Định và đăng ký thường trú tại Nam Định. Nay do công việc làm ăn, chúng tôi buôn bán tại cửa khẩu Móng Cái, tỉnh Quảng Ninh và đăng ký tạm trú tại đây. Vậy cho tôi hỏi, tôi và chồng tôi có phải về lại Nam Định để đăng ký kết hôn hay không?
+- Theo quy định tại Điều 17 Luật Hộ tịch thì Ủy ban nhân dân cấp xã nơi cư trú của một trong hai bên nam, nữ thực hiện đăng ký kết hôn. Theo quy định tại Điều 5 Nghị định số 31/2014/NĐ-CP ngày 18/4/2014 của Chính phủ quy định chi tiết một số điều và biện pháp thi hành Luật cư trú thì “Nơi cư trú” của công dân được hiểu là nơi thường trú hoặc nơi tạm trú. Do đó, anh, chị không phải quay về nơi thường trú để đăng ký kết hôn mà có thể đăng ký tại UBND cấp xã nơi anh, chị tạm trú tại tỉnh Quảng Ninh để đăng ký kết hôn.
+
+3. Hiện nay, tôi muốn lấy một anh là người Campuchia thì phải làm thế nào ạ?
+- Thẩm quyền, trình tự, thủ tục đăng ký kết hôn (ĐKKH) giữa công dân Việt Nam với công dân Campuchia được thực hiện theo quy định tại Điều 37, Điều 38 Luật hộ tịch và Điều 30, Điều 31, Điều 32, Điều 33 Nghị định số 123/2015/NĐ-CP ngày 15/11/2015. Trường hợp công dân Việt Nam thường trú tại địa bàn xã ở khu vực biên giới kết hôn với công dân Lào thường trú tại đơn vị hành chính tương đương cấp xã giáp với xã ở khu vực biên giới của Việt Nam nơi công dân Việt Nam thường trú, thì việc ĐKKH được thực hiện tại Điều 18 Nghị định số  123/2015/NĐ-CP, Cụ thể:- Người yêu cầu ĐKKH trực tiếp nộp hồ sơ tại Ủy ban nhân dân cấp huyện nơi công dân Việt Nam cư trú. Trường hợp ở khu vực biên giới thì nộp hồ sơ tại Ủy ban nhân dân cấp xã.- Hồ sơ ĐKKH bao gồm:+ Tờ khai đăng ký kết hôn theo mẫu;+ Giấy xác nhận của tổ chức y tế có thẩm quyền của Việt Nam hoặc Campuchia xác nhận các bên kết hôn không mắc bệnh tâm thần hoặc bệnh khác mà không có khả năng nhận thức, làm chủ được hành vi của mình;+ Giấy tờ chứng minh tình trạng hôn nhân của công dân Campuchia do cơ quan có thẩm quyền của Campuchia cấp còn giá trị sử dụng, xác nhận hiện tại người đó không có vợ hoặc không có chồng hoặc đủ điều kiện kết hôn theo pháp luật Campuchia.+ Công dân Campuchia phải nộp bản sao hộ chiếu/giấy tờ có giá trị thay hộ chiếu hoặc xuất trình bản chính hộ chiếu/giấy tờ có giá trị thay hộ chiếu/giấy tờ chứng minh nơi thường trú ở khu vực biên giới của công dân Campuchia (nếu thuộc trường hợp đăng ký kết hôn ở khu vực biên giới).+ Giấy xác nhận tình trạng hôn nhân của công dân Việt Nam (trừ trường hợp đăng ký kết hôn ở khu vực biên giới).+ Nếu công dân Việt Nam đã ly hôn hoặc hủy việc kết hôn tại cơ quan có thẩm quyền của nước ngoài phải nộp bản sao trích lục hộ tịch về việc đã ghi vào sổ việc ly hôn hoặc hủy việc kết hôn trái pháp luật;+ Nếu công dân Việt Nam là công chức, viên chức hoặc đang phục vụ trong lực lượng vũ trang phải nộp văn bản của cơ quan, đơn vị quản lý xác nhận việc kết hôn với người nước ngoài không trái với quy định của ngành đó;Ngoài ra, khi làm thủ tục đăng ký kết hôn, công dân Việt Nam phải xuất trình hộ chiếu hoặc chứng minh nhân dân hoặc thẻ căn cước công dân hoặc các giấy tờ khác có dán ảnh và thông tin cá nhân do cơ quan có thẩm quyền cấp, còn giá trị sử dụng để chứng minh về nhân thân; giấy tờ chứng minh nơi cư trú để xác định thẩm quyền ĐKKH.

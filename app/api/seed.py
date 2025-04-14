@@ -25,98 +25,23 @@ import os
 
 organizations = [
     {
-        'display_name': 'Pepe Corp.',
-        'namespace': 'pepe',
+        'display_name': 'Vietnamese national public service portal',
+        'namespace': 'vnpsp',
         'projects': [
             {
-                'display_name': 'Pepetamine',
+                'display_name': 'Birth registration',
                 'docs': [
-                    'project-pepetamine.md'
+                    'project-birth_registration.md'
                 ]
             },
             {
-                'display_name': 'Frogonil',
+                'display_name': 'Vietnamese national public service portal (portal)',
                 'docs': [
-                    'project-frogonil.md'
-                ]
-            },
-            {
-                'display_name': 'Kekzal',
-                'docs': [
-                    'project-kekzal.md'
-                ]
-            },
-            {
-                'display_name': 'Memetrex',
-                'docs': [
-                    'project-memetrex.md'
-                ]
-            },
-            {
-                'display_name': 'PepeTrak',
-                'docs': [
-                    'project-pepetrak.md'
-                ]
-            },
-            {
-                'display_name': 'MemeGen',
-                'docs': [
-                    'project-memegen.md'
-                ]
-            },
-            {
-                'display_name': 'Neuro-kek',
-                'docs': [
-                    'project-neurokek.md'
-                ]
-            },
-            {
-                'display_name': 'Pepe Corp. (company)',
-                'docs': [
-                    'org-about_the_company.md',
-                    'org-board_of_directors.md',
-                    'org-company_story.md',
-                    'org-corporate_philosophy.md',
-                    'org-customer_support.md',
-                    'org-earnings_fy2023.md',
-                    'org-management_team.md' 
+                    'org-about_the_portal.md',
+                    'org-functions_of_the_portal.md',
+                    'org-usage_instructions.md'
                 ]
             }
-        ]
-    },
-    {
-        'display_name': 'Umbrella Corp',
-        'namespace': 'acme',
-        'projects': [
-            {'display_name': 'T-Virus'},
-            {'display_name': 'G-Virus'},
-            {'display_name': 'Umbrella Corp. (company)'}
-        ]
-    },
-    {
-        'display_name': 'Cyberdine Systems',
-        'namespace': 'cyberdine',
-        'projects': [
-            {'display_name': 'Skynet'},
-            {'display_name': 'Cyberdine Systems (company)'}
-        ]
-    },
-    {
-        'display_name': 'Bluth Companies',
-        'namespace': 'bluth',
-        'projects': [
-            {'display_name': 'Bluth Company (company)'}
-        ]
-    },
-    {
-        'display_name': 'Evil Corp',
-        'namespace': 'evil',
-        'projects': [
-            {'display_name': 'E-Coin'},
-            {'display_name': 'E-Corp Power'},
-            {'display_name': 'Bank of E Network'},
-            {'display_name': 'E Corp Labs'},
-            {'display_name': 'Evil Corp (company)'}
         ]
     }
 ]

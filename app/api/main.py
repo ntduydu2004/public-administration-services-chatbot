@@ -519,6 +519,11 @@ def get_webhook(
         # Not a valid channel, return 404
         raise HTTPException(status_code=404, detail=f'Channel {channel} not a valid webhook channel!')
 
+    if not user_message or not user_message.strip():
+        logger.warning("⚠️ Empty query_str from Telegram message. Skipping.")
+        return {"status": "ok", "message": "Empty input ignored."}
+    
+    
     chat_session = chat_query(
         user_message,
         session=session,
