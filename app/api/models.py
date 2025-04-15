@@ -35,6 +35,7 @@ from config import (
     CHANNEL_TYPE,
     LLM_MODELS,
     DB_USER,
+    DB_NAME,
     SU_DSN,
     logger,
 )
@@ -594,7 +595,7 @@ def create_db():
 def create_user_permissions():
     session = Session(get_engine(dsn=SU_DSN))
     # grant access to entire database and all tables to user DB_USER
-    query = text("GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO api;")
+    query = text(f"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO {DB_NAME};")
     session.execute(query)
     session.commit()
     session.close()

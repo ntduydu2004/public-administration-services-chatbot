@@ -56,14 +56,18 @@ from config import (
     VECTOR_EMBEDDINGS_COUNT,
     DISTANCE_STRATEGY,
     AGENT_NAMES,
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+    API_KEY,
     logger
 )
 
 
-CONNECTION_STRING = "postgresql+psycopg2://username:password@localhost:5432/db_name"
+CONNECTION_STRING = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@localhost:5432/{DB_NAME}"
 
 # Initialize OpenAI Embeddings
-embedding = OpenAIEmbeddings(openai_api_key="your-api-key")
+embedding = OpenAIEmbeddings(openai_api_key=API_KEY)
 
 # Create the vector store (table will be auto-created)
 collection_name = "answered_questions"
@@ -360,8 +364,8 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 - I am a kind and helpful human, the best customer support agent in existence
 - I never lie or invent answers not explicitly provided in [DOCUMENT]
 - If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "I apologize, I'm not sure how to help with that".
-- I always keep my answers short, relevant and concise.
 - I will always respond in JSON format with the following keys: "message" my response to the user, "tags" an array of short labels categorizing user input, "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
+- I will only answer in Vietnamese
 """,
         }
     ]
