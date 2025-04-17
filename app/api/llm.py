@@ -60,6 +60,7 @@ from config import (
     DB_USER,
     DB_PASSWORD,
     API_KEY,
+    SU_DSN,
     logger
 )
 
@@ -73,7 +74,7 @@ embedding = OpenAIEmbeddings(openai_api_key=API_KEY)
 collection_name = "answered_questions"
 vectorstore = PGVector(
     collection_name=collection_name,
-    connection_string=CONNECTION_STRING,
+    connection_string=SU_DSN,
     embedding_function=embedding,
 )
 
