@@ -56,16 +56,11 @@ from config import (
     VECTOR_EMBEDDINGS_COUNT,
     DISTANCE_STRATEGY,
     AGENT_NAMES,
-    DB_NAME,
-    DB_USER,
-    DB_PASSWORD,
     API_KEY,
     SU_DSN,
     logger
 )
 
-
-CONNECTION_STRING = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@localhost:5432/{DB_NAME}"
 
 # Initialize OpenAI Embeddings
 embedding = OpenAIEmbeddings(openai_api_key=API_KEY)
@@ -122,6 +117,7 @@ def chat_query(
     response_message = None
     prompt = None
     context_str = None
+    query_embeddings = None
     MODEL_TOKEN_LIMIT = (
         model.token_limit if isinstance(model, OpenAI) else LLM_MAX_OUTPUT_TOKENS
     )
@@ -160,6 +156,7 @@ def chat_query(
     # ----------------
     response_message = None
     cached_answer = get_cached_answer(query_str)
+    logger.debug(f"💬 Cached answer: {cached_answer}")
     if cached_answer:
         response_message = cached_answer
     else:  
@@ -387,7 +384,7 @@ def get_token_count(text: str):
 # ------------------------
 # Get the cached answer
 # ------------------------
-def get_cached_answer(query, threshold=0.8) -> Optional[str]:
+def get_cached_answer(query, distance_threshold=0.3) -> Optional[str]:
     """
     Check if the query is already in the vector store and return the cached answer if found.
     """
@@ -395,7 +392,7 @@ def get_cached_answer(query, threshold=0.8) -> Optional[str]:
     if results:
         doc, score = results[0]
         # Lower score = more similar
-        if score < (1 - threshold):  
+        if score < distance_threshold:  
             return doc.metadata["answer"]
     return None
 
