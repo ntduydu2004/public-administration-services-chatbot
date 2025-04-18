@@ -292,11 +292,12 @@ rasa-train:
 	@make rasa-stop
 	@echo "✅ Done\n"
 
-#-------------------
-# Remake database
-#-------------------
+
+# -----------------
+# Remake
+# -----------------
 remake:
-	@echo "🔄 Remaking database ..\n"
+	@echo "🔄 Remaking the docker images ..\n"
 	@make db-purge
 	@make rasa-train
 	@make run
@@ -304,4 +305,5 @@ remake:
 	@make models
 	@make rasa-restart
 	@make seed
+	@make restart
 	@echo "✅ Done\n"

@@ -661,3 +661,12 @@ $$;""")
 
 if __name__ == "__main__":
     create_db()
+
+
+from langchain.memory import ConversationBufferMemory
+
+class TrimmedConversationBufferMemory(ConversationBufferMemory):
+
+    def save_context(self, inputs: dict, outputs: dict) -> None:
+        while len(self.chat_memory.messages) > 8: # 8 = 5 cau chat
+            self.chat_memory.messages.pop(0)
