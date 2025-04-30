@@ -62,8 +62,6 @@ from config import (
     logger
 )
 
-from langchain.chains import ConversationChain
-
 chat_history: Dict[str, TrimmedConversationBufferMemory] = {}
 chat_history_summary: Dict[str, str] = {}
 
@@ -100,20 +98,21 @@ def chat_query(
     """
     Steps:
         1. ✅ Clean user input
-        1-1. ✅ Get chat summary    
-        2. ✅ Check for cached answer
-        3. ✅ If the answer is found, proceed to step 10
-        4. ✅ Create input embeddings
-        5. ✅ Search for similar nodes
-        6. ✅ Create prompt template w/ similar nodes
-        7. ✅ Submit prompt template to LLM
-        8. ✅ Get response from LLM
-        9. ✅ Store response in vector store
-        10. Create ChatSession
+        2. ✅ Get chat summary    
+        3. ✅ Check for cached answer
+        4. ✅ If the answer is found, proceed to step 10
+        5. ✅ Use router to determine the strategy
+        6. ✅ Create input embeddings
+        7. ✅ Search for similar nodes
+        8. ✅ Create prompt template w/ similar nodes
+        9. ✅ Submit prompt template to LLM
+        10. ✅ Get response from LLM
+        11. ✅ Store response in vector store
+        12. Create ChatSession
             - Store embeddings
             - Store tags
             - Store is_escalate
-        8. Return response
+        13. Return response
     """
     if query_str == None:
         raise ValueError("query_str is required")
@@ -128,6 +127,7 @@ def chat_query(
     prompt = None
     context_str = None
     query_embeddings = None
+    cached_answer = None
     MODEL_TOKEN_LIMIT = (
         model.token_limit if isinstance(model, OpenAI) else LLM_MAX_OUTPUT_TOKENS
     )
@@ -195,10 +195,12 @@ def chat_query(
     # Get chat summary
     # ----------------------
     if query_str:
-        chat_summary = retrieve_chat_summary(
-            user_id=user.identifier,
-            query_str=query_str,
-            model=model,
+        chat_summary = sanitize_input(
+            retrieve_chat_summary(
+                user_id=user.identifier,
+                query_str=query_str,
+                model=model,
+            )
         )
         chat_history_summary[user.identifier] = chat_summary
     
@@ -213,120 +215,111 @@ def chat_query(
     logger.debug(f"💬 Cached answer: {cached_answer}")
     if cached_answer:
         response_message = cached_answer
-    else:  
-        # ----------------
-        # Get token counts
-        # ----------------
-        query_token_count = get_token_count(query_str)
-        prompt_token_count = 0
-
-        # -----------------------
-        # Create input embeddings
-        # -----------------------
-        _, embeddings = get_embeddings(query_str)
-
-        query_embeddings = embeddings[0]
-
-        # ------------------------
-        # Search for similar nodes
-        # ------------------------
-        nodes = get_nodes_by_embedding(
-            query_embeddings,
-            node_limit,
-            distance_strategy=distance_strategy
-            if isinstance(distance_strategy, DISTANCE_STRATEGY)
-            else LLM_DEFAULT_DISTANCE_STRATEGY,
-            distance_threshold=distance_threshold,
-            session=session,
-        )
-
-        if len(nodes) > 0:
-            if (not project or not organization) and session:
-                # get document from Node via session object:
-                document = session.get(Node, nodes[0].id).document
-                project = document.project
-                organization = project.organization
-
-            # ----------------------
-            # Create prompt template
-            # ----------------------
-
-            # concatenate all nodes into a single string
-            context_str = "\n\n".join([node.text for node in nodes])
-
-            # -------------------------------------------
-            # Let's make sure we don't exceed token limit
-            # -------------------------------------------
-            context_token_count = get_token_count(context_str)
-
-            # ----------------------------------------------
-            # if token count exceeds limit, truncate context
-            # ----------------------------------------------
-            if (
-                context_token_count + query_token_count + prompt_token_count
-            ) > MODEL_TOKEN_LIMIT:
-                logger.debug("🚧 Exceeded token limit, truncating context")
-                token_delta = MODEL_TOKEN_LIMIT - (query_token_count + prompt_token_count)
-                context_str = context_str[:token_delta]
-
-            # create prompt template
-            system_prompt, user_prompt = get_prompt_template(
-                user_query=query_str,
-                context_str=context_str,
-                project=project,
-                organization=organization,
-                agent=agent_name,
-            )
-
-            prompt_token_count = get_token_count(prompt)
-            token_count = context_token_count + query_token_count + prompt_token_count
-
-            # ---------------------------
-            # Get response from LLM model
-            # ---------------------------
-            # It should return a JSON dict
-            llm_response = json.loads(
-                retrieve_llm_response(
-                    user_prompt,
-                    model=model,
-                    max_output_tokens=max_output_tokens,
-                    prefix_messages=system_prompt,
-                )
-            )
-            tags = llm_response.get("tags", [])
-            is_escalate = llm_response.get("is_escalate", False)
-            response_message = llm_response.get("message", None)
-            store_answered_question(
-                question=query_str,
-                answer=response_message,
-            )
+    else:
+        strategy = query_router(query_str)
+        logger.debug(f"💬 Query strategy: {strategy}")
+        
+        if strategy == "None":
+            # return default response
+            response_message = "Hãy hỏi tôi về hành chính công, tôi sẽ giúp bạn tìm kiếm thông tin cần thiết."
+            tags = []
+            is_escalate = True
         else:
-            logger.info("🚫📝 No similar nodes found, returning default response")
+            
+            # ----------------
+            # Get token counts
+            # ----------------
+            query_token_count = get_token_count(query_str)
+            prompt_token_count = 0
+
+            # -----------------------
+            # Create input embeddings
+            # -----------------------
+            _, embeddings = get_embeddings(query_str)
+
+            query_embeddings = embeddings[0]
+
+            # ------------------------
+            # Search for similar nodes
+            # ------------------------
+            nodes = get_nodes_by_embedding(
+                query_embeddings,
+                node_limit,
+                distance_strategy=distance_strategy
+                if isinstance(distance_strategy, DISTANCE_STRATEGY)
+                else LLM_DEFAULT_DISTANCE_STRATEGY,
+                distance_threshold=distance_threshold,
+                session=session,
+            )
+
+            if len(nodes) > 0:
+                if (not project or not organization) and session:
+                    # get document from Node via session object:
+                    document = session.get(Node, nodes[0].id).document
+                    project = document.project
+                    organization = project.organization
+
+                # ----------------------
+                # Create prompt template
+                # ----------------------
+
+                # concatenate all nodes into a single string
+                context_str = "\n\n".join([node.text for node in nodes])
+
+                # -------------------------------------------
+                # Let's make sure we don't exceed token limit
+                # -------------------------------------------
+                context_token_count = get_token_count(context_str)
+
+                # ----------------------------------------------
+                # if token count exceeds limit, truncate context
+                # ----------------------------------------------
+                if (
+                    context_token_count + query_token_count + prompt_token_count
+                ) > MODEL_TOKEN_LIMIT:
+                    logger.debug("🚧 Exceeded token limit, truncating context")
+                    token_delta = MODEL_TOKEN_LIMIT - (query_token_count + prompt_token_count)
+                    context_str = context_str[:token_delta]
+
+                # create prompt template
+                system_prompt, user_prompt = get_prompt_template(
+                    user_query=query_str,
+                    context_str=context_str,
+                    project=project,
+                    organization=organization,
+                    agent=agent_name,
+                )
+
+                prompt_token_count = get_token_count(prompt)
+                token_count = context_token_count + query_token_count + prompt_token_count
+
+                # ---------------------------
+                # Get response from LLM model
+                # ---------------------------
+                # It should return a JSON dict
+                llm_response = json.loads(
+                    retrieve_llm_response(
+                        user_prompt,
+                        model=model,
+                        max_output_tokens=max_output_tokens,
+                        prefix_messages=system_prompt,
+                    )
+                )
+                tags = llm_response.get("tags", [])
+                is_escalate = llm_response.get("is_escalate", False)
+                response_message = llm_response.get("message", None)
+                store_answered_question(
+                    question=query_str,
+                    answer=response_message,
+                )
+            else:
+                logger.info("🚫📝 No similar nodes found, returning default response")
+                response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
+                tags = []
+                is_escalate = True
 
     chat_history[user.identifier].chat_memory.add_user_message(user_message)
     chat_history[user.identifier].chat_memory.add_ai_message(response_message)  
-
-    # ----------------
-    # Get user details
-    # ----------------
-    user = get_user_by_uuid_or_identifier(
-        identifier, session=session, should_except=False
-    )
-
-    if not user:
-        logger.debug("🚫👤 User not found, creating new user")
-        user_params = {
-            "identifier": identifier,
-            "identifier_type": channel.value
-            if isinstance(channel, CHANNEL_TYPE)
-            else channel,
-        }
-        if user_data:
-            user_params = {**user_params, **user_data}
-
-        user = User.create(user_params)
-    else:
-        logger.debug(f"👤 User found: {user}")
 
     # -----------------------------------
     # Calculate input and response tokens
@@ -349,7 +342,7 @@ def chat_query(
         session_id=session_id,
         project_id=project.id if project else None,
         channel=channel.value if isinstance(channel, CHANNEL_TYPE) else channel,
-        user_message=query_str,
+        user_message=user_message,
         embeddings=query_embeddings,
         token_count=token_count if token_count > 0 else None,
         response=response_message,
@@ -368,7 +361,6 @@ def chat_query(
             session.refresh(chat_session)
 
     return chat_session
-
 
 # ------------------------------
 # Retrieve a random agent's name
@@ -419,14 +411,18 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 - I am a kind and helpful human, the best customer support agent in existence
 - I never lie or invent answers not explicitly provided in [DOCUMENT]
 - If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "I apologize, I'm not sure how to help with that".
-- I will always respond in JSON format with the following keys: "message" my response to the user, "tags" an array of short labels categorizing user input, "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
+- I will always respond in JSON format with the following keys: "message" my response to the user, "tags" an array of short labels consisting a query type and a procedure type categorizing user input, "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
 - I will only answer in Vietnamese
+
+[INSTRUCTIONS FOR TAGS]:
+- tags[0]: Response "Hỏi đáp" if the user is asking about requirements, documents, conditions, costs, etc.    
+           Response "Hướng dẫn" If the user is asking for steps, instructions, process, etc.
+- tags[1]: Choose from the following list if the procedure is clearly mentioned: khai sinh, thường trú, kết hôn, khai tử, cấp căn cước, cấp lại căn cước. If none match then response "khác"
 """,
         }
     ]
 
     return (system_prompt, f"[USER]:\n{user_query}")
-
 
 # ----------------------------
 # Get the count of tokens used
@@ -441,7 +437,8 @@ def get_token_count(text: str):
 # ------------------------
 # Get the cached answer
 # ------------------------
-def get_cached_answer(query, distance_threshold=0.3) -> Optional[str]:
+def get_cached_answer(query, distance_threshold=0.05) -> Optional[str]:
+
     """
     Check if the query is already in the vector store and return the cached answer if found.
     """
@@ -450,6 +447,7 @@ def get_cached_answer(query, distance_threshold=0.3) -> Optional[str]:
         doc, score = results[0]
         # Lower score = more similar
         if score < distance_threshold:  
+            logger.debug(f"🔍 Found cached answer with score {score}")
             return doc.metadata["answer"]
     return None
 
@@ -608,3 +606,18 @@ Current user message:
     summary = llm(prompt=summary_prompt)
     
     return summary
+
+def query_router(
+    query_str: str,
+):
+    strategy = "None"
+    procedures = ["khai sinh", "thường trú", "kết hôn", "khai tử", "cấp lại cccd", "cấp cccd", "cấp căn cước", "cấp lại căn cước"]
+    
+    lower_query = query_str.lower()
+    
+    for procedure in procedures:
+        if procedure in lower_query:
+            strategy = "RAG"
+            return strategy
+    
+    return strategy
