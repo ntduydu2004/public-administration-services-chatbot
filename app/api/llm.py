@@ -214,7 +214,7 @@ def chat_query(
     cached_answer = get_cached_answer(query_str)
     logger.debug(f"💬 Cached answer: {cached_answer}")
     if cached_answer:
-        response_message = cached_answer
+        response_message, tags = cached_answer
     else:
         strategy = query_router(query_str)
         logger.debug(f"💬 Query strategy: {strategy}")
@@ -222,7 +222,7 @@ def chat_query(
         if strategy == "None":
             # return default response
             response_message = "Hãy hỏi tôi về hành chính công, tôi sẽ giúp bạn tìm kiếm thông tin cần thiết."
-            tags = []
+            tags = ["undefined", "undefined"]
             is_escalate = True
         else:
             
@@ -311,11 +311,12 @@ def chat_query(
                 store_answered_question(
                     question=query_str,
                     answer=response_message,
+                    tags=tags,
                 )
             else:
                 logger.info("🚫📝 No similar nodes found, returning default response")
                 response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
-                tags = []
+                tags = ["undefined", "undefined"]
                 is_escalate = True
 
     chat_history[user.identifier].chat_memory.add_user_message(user_message)
@@ -448,14 +449,20 @@ def get_cached_answer(query, distance_threshold=0.05) -> Optional[str]:
         # Lower score = more similar
         if score < distance_threshold:  
             logger.debug(f"🔍 Found cached answer with score {score}")
-            return doc.metadata["answer"]
+            return doc.metadata["answer"], doc.metadata["tags"]
     return None
 
 # ------------------------
 # Store the answered question
 # ------------------------
-def store_answered_question(question: str, answer: str):
-    doc = Document(page_content=question, metadata={"answer": answer})
+def store_answered_question(question: str, answer: str, tags: Optional[List[str]] = None):
+    
+    doc = Document(
+        page_content=question, 
+        metadata={
+            "answer": answer,
+            "tags": tags,}
+    )
     vectorstore.add_documents([doc])
 
 # --------------------------------------------
