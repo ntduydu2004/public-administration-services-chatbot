@@ -20,7 +20,7 @@ env = os.getenv("ENV", None)
 
 if not env:
     # Check up to 2 levels up for .env-{env} file
-    env_file = Path(__file__).parent.parent.parent / '.env'
+    env_file = Path(__file__).parent.parent.parent / ".env"
     logger.debug(f"Loading env file: {env_file}")
     if os.path.exists(env_file):
         load_dotenv(dotenv_path=env_file)
@@ -72,7 +72,9 @@ DB_PORT = os.getenv("DB_PORT", 5432)
 DB_USER = os.getenv("DB_USER")
 DB_NAME = os.getenv("DB_NAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
-API_KEY= os.getenv("OPENAI_API_KEY")
+
+TELEGRAM_ACCESS_TOKEN = os.getenv("TELEGRAM_ACCESS_TOKEN")
+API_KEY = os.getenv("OPENAI_API_KEY")
 DSN = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 SU_DSN = (
     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
@@ -138,7 +140,7 @@ DOCUMENT_TYPE = IntEnum("DOCUMENT_TYPE", ["PLAINTEXT", "MARKDOWN", "HTML", "PDF"
 
 ENTITY_STATUS = IntEnum(
     "ENTITY_STATUS",
-    ["UNVERIFIED", "ACTIVE", "INACTIVE", "DELETED", "BANNED" "DEPRECATED"],
+    ["UNVERIFIED", "ACTIVE", "INACTIVE", "DELETED", "BANNEDDEPRECATED"],
 )
 CHANNEL_TYPE = IntEnum(
     "CHANNEL_TYPE", ["SMS", "TELEGRAM", "WHATSAPP", "EMAIL", "WEBSITE"]

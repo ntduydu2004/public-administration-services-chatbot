@@ -17,13 +17,7 @@ from sqlmodel import (
     select,
     Field,
 )
-from typing import (
-    Optional,
-    Union,
-    List,
-    Dict,
-    Any
-)
+from typing import Optional, Union, List, Dict, Any
 from config import (
     LLM_DEFAULT_DISTANCE_STRATEGY,
     VECTOR_EMBEDDINGS_COUNT,
@@ -451,7 +445,9 @@ class ChatSession(BaseModel, table=True):
     embeddings: Optional[List[float]] = Field(
         sa_column=Column(Vector(VECTOR_EMBEDDINGS_COUNT))
     )
+    instruction_steps: Optional[List[str]] = Field(default_factory=list)
     response: Optional[str] = Field(default=None)
+    title: Optional[str] = Field(default=None)
     meta: Optional[Dict] = Field(default=None, sa_column=Column(JSONB))
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -502,7 +498,9 @@ class ChatSessionRead(SQLModel):
 class ChatSessionResponse(SQLModel):
     meta: Optional[dict]
     response: Optional[str]
+    title: Optional[str]
     user_message: Optional[str]
+    instrcution_steps: Optional[List[str]]
 
 
 class ProjectReadChatSessionRead(SQLModel):
@@ -595,7 +593,9 @@ def create_db():
 def create_user_permissions():
     session = Session(get_engine(dsn=SU_DSN))
     # grant access to entire database and all tables to user DB_USER
-    query = text(f"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO {DB_NAME};")
+    query = text(
+        f"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO {DB_NAME};"
+    )
     session.execute(query)
     session.commit()
     session.close()
@@ -619,7 +619,7 @@ def create_vector_index():
 def enable_vector():
     session = Session(get_engine(dsn=SU_DSN))
     query = text("CREATE EXTENSION IF NOT EXISTS vector;")
-    session.execute(query) 
+    session.execute(query)
     session.commit()
     add_vector_distance_fn(session)
     session.close()
@@ -665,8 +665,9 @@ if __name__ == "__main__":
 
 from langchain.memory import ConversationBufferMemory
 
-class TrimmedConversationBufferMemory(ConversationBufferMemory):
 
+class TrimmedConversationBufferMemory(ConversationBufferMemory):
     def save_context(self, inputs: dict, outputs: dict) -> None:
-        while len(self.chat_memory.messages) > 8: # 8 = 5 cau chat
+        while len(self.chat_memory.messages) > 8:  # 8 = 5 cau chat
             self.chat_memory.messages.pop(0)
+

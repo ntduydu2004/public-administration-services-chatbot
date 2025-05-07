@@ -8,30 +8,15 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.schema import Document
 from fastapi import HTTPException
 from uuid import UUID, uuid4
-from langchain.text_splitter import (
-    CharacterTextSplitter,
-    MarkdownTextSplitter
-)
-from sqlmodel import (
-    Session,
-    text
-)
-from util import (
-    sanitize_input,
-    sanitize_output
-)
+from langchain.text_splitter import CharacterTextSplitter, MarkdownTextSplitter
+from sqlmodel import Session, text
+from util import sanitize_input, sanitize_output, add_steps_to_response
 from langchain import OpenAI
-from typing import (
-    List,
-    Union,
-    Optional,
-    Dict,
-    Tuple,
-    Any
-)
+from typing import List, Union, Optional, Dict, Tuple, Any
 from helpers import (
     get_user_by_uuid_or_identifier,
-    get_chat_session_by_uuid
+    get_chat_session_by_uuid,
+    draw_diagram,
 )
 from models import (
     User,
@@ -41,7 +26,7 @@ from models import (
     ChatSession,
     ChatSessionResponse,
     TrimmedConversationBufferMemory,
-    get_engine
+    get_engine,
 )
 from config import (
     CHANNEL_TYPE,
@@ -59,7 +44,7 @@ from config import (
     AGENT_NAMES,
     API_KEY,
     SU_DSN,
-    logger
+    logger,
 )
 
 chat_history: Dict[str, TrimmedConversationBufferMemory] = {}
@@ -75,6 +60,7 @@ vectorstore = PGVector(
     connection_string=SU_DSN,
     embedding_function=embedding,
 )
+
 
 # -------------
 # Query the LLM
@@ -98,7 +84,7 @@ def chat_query(
     """
     Steps:
         1. ✅ Clean user input
-        2. ✅ Get chat summary    
+        2. ✅ Get chat summary
         3. ✅ Check for cached answer
         4. ✅ If the answer is found, proceed to step 10
         5. ✅ Use router to determine the strategy
@@ -114,10 +100,10 @@ def chat_query(
             - Store is_escalate
         13. Return response
     """
-    if query_str == None:
+    if query_str is None:
         raise ValueError("query_str is required")
         return None
-    
+
     meta = {}
     agent_name = None
     embeddings = []
@@ -178,11 +164,12 @@ def chat_query(
         logger.debug(f"👤 User found: {user}")
 
     if user.identifier not in chat_history:
-        chat_history[user.identifier] = TrimmedConversationBufferMemory(memory_key="history")
-        
+        chat_history[user.identifier] = TrimmedConversationBufferMemory(
+            memory_key="history"
+        )
+
     if user.identifier not in chat_history_summary:
         chat_history_summary[user.identifier] = ""
-
 
     # ----------------
     # Clean user input
@@ -190,7 +177,7 @@ def chat_query(
     query_str = sanitize_input(query_str)
     logger.debug(f"💬 Query received: {query_str}")
     user_message = f"{query_str}"
-    
+
     # ----------------------
     # Get chat summary
     # ----------------------
@@ -203,9 +190,8 @@ def chat_query(
             )
         )
         chat_history_summary[user.identifier] = chat_summary
-    
-    
-    query_str = chat_summary # + query_str
+
+    query_str = chat_summary  # + query_str
     logger.debug(f"💬 Query with summary: {query_str}")
 
     # ----------------
@@ -218,14 +204,13 @@ def chat_query(
     else:
         strategy = query_router(query_str)
         logger.debug(f"💬 Query strategy: {strategy}")
-        
+
         if strategy == "None":
             # return default response
             response_message = "Hãy hỏi tôi về hành chính công, tôi sẽ giúp bạn tìm kiếm thông tin cần thiết."
             tags = ["undefined", "undefined"]
             is_escalate = True
         else:
-            
             # ----------------
             # Get token counts
             # ----------------
@@ -278,7 +263,9 @@ def chat_query(
                     context_token_count + query_token_count + prompt_token_count
                 ) > MODEL_TOKEN_LIMIT:
                     logger.debug("🚧 Exceeded token limit, truncating context")
-                    token_delta = MODEL_TOKEN_LIMIT - (query_token_count + prompt_token_count)
+                    token_delta = MODEL_TOKEN_LIMIT - (
+                        query_token_count + prompt_token_count
+                    )
                     context_str = context_str[:token_delta]
 
                 # create prompt template
@@ -291,7 +278,9 @@ def chat_query(
                 )
 
                 prompt_token_count = get_token_count(prompt)
-                token_count = context_token_count + query_token_count + prompt_token_count
+                token_count = (
+                    context_token_count + query_token_count + prompt_token_count
+                )
 
                 # ---------------------------
                 # Get response from LLM model
@@ -305,14 +294,16 @@ def chat_query(
                         prefix_messages=system_prompt,
                     )
                 )
+                logger.debug("💬 LLM response: ", llm_response)
                 tags = llm_response.get("tags", [])
                 is_escalate = llm_response.get("is_escalate", False)
+                steps = llm_response.get("steps", [])
                 response_message = llm_response.get("message", None)
+                title = llm_response.get("title", "undefined")
                 store_answered_question(
-                    question=query_str,
-                    answer=response_message,
-                    tags=tags,
+                    question=query_str, answer=response_message, tags=tags, steps=steps
                 )
+                response_message = add_steps_to_response(steps, response_message)
             else:
                 logger.info("🚫📝 No similar nodes found, returning default response")
                 response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
@@ -320,7 +311,7 @@ def chat_query(
                 is_escalate = True
 
     chat_history[user.identifier].chat_memory.add_user_message(user_message)
-    chat_history[user.identifier].chat_memory.add_ai_message(response_message)  
+    chat_history[user.identifier].chat_memory.add_ai_message(response_message)
 
     # -----------------------------------
     # Calculate input and response tokens
@@ -344,6 +335,8 @@ def chat_query(
         project_id=project.id if project else None,
         channel=channel.value if isinstance(channel, CHANNEL_TYPE) else channel,
         user_message=user_message,
+        title=title,
+        instruction_steps=steps,
         embeddings=query_embeddings,
         token_count=token_count if token_count > 0 else None,
         response=response_message,
@@ -362,6 +355,7 @@ def chat_query(
             session.refresh(chat_session)
 
     return chat_session
+
 
 # ------------------------------
 # Retrieve a random agent's name
@@ -411,8 +405,13 @@ Given the following document from "{organization}", I will answer the [USER] que
 I will answer the user's questions using only the [DOCUMENT] provided. I will abide by the following rules:
 - I am a kind and helpful human, the best customer support agent in existence
 - I never lie or invent answers not explicitly provided in [DOCUMENT]
-- If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "I apologize, I'm not sure how to help with that".
-- I will always respond in JSON format with the following keys: "message" my response to the user, "tags" an array of short labels consisting a query type and a procedure type categorizing user input, "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
+- If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "Xin lỗi, tôi không thể hỗ trợ bạn trong lĩnh vực này.".
+- I will always respond in JSON format with the following keys: 
+  + "message" my response to the user. 
+  + "tags" an array of short labels consisting a query type and a procedure type categorizing user input
+  + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
+  + "title" a string, if the question is about instructing a process or instruction, return the name of that process. Otherwise, return string "undefined"
+  + "steps", an array of steps of a process if the question is about instructing a process or a procedure. Otherwise, return an empty array. If there are multiple ways to do a process, I will not choose the one that uses search bar or any means of searching on the portal. Each step must be summarized to at most 10 words. For a phrase that cannot be replaced or changed like names, terminology..., it will be abbreviated.
 - I will only answer in Vietnamese
 
 [INSTRUCTIONS FOR TAGS]:
@@ -425,6 +424,7 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 
     return (system_prompt, f"[USER]:\n{user_query}")
 
+
 # ----------------------------
 # Get the count of tokens used
 # ----------------------------
@@ -435,11 +435,11 @@ def get_token_count(text: str):
 
     return OpenAI().get_num_tokens(text=text)
 
+
 # ------------------------
 # Get the cached answer
 # ------------------------
 def get_cached_answer(query, distance_threshold=0.05) -> Optional[str]:
-
     """
     Check if the query is already in the vector store and return the cached answer if found.
     """
@@ -447,23 +447,27 @@ def get_cached_answer(query, distance_threshold=0.05) -> Optional[str]:
     if results:
         doc, score = results[0]
         # Lower score = more similar
-        if score < distance_threshold:  
+        if score < distance_threshold:
             logger.debug(f"🔍 Found cached answer with score {score}")
             return doc.metadata["answer"], doc.metadata["tags"]
     return None
 
+
 # ------------------------
 # Store the answered question
 # ------------------------
-def store_answered_question(question: str, answer: str, tags: Optional[List[str]] = None):
-    
+def store_answered_question(
+    question: str,
+    answer: str,
+    tags: Optional[List[str]] = None,
+    steps: Optional[List[str]] = None,
+):
     doc = Document(
-        page_content=question, 
-        metadata={
-            "answer": answer,
-            "tags": tags,}
+        page_content=question,
+        metadata={"answer": answer, "tags": tags, "steps": steps},
     )
     vectorstore.add_documents([doc])
+
 
 # --------------------------------------------
 # Query embedding search for similar documents
@@ -532,7 +536,7 @@ def retrieve_llm_response(
         ##     llm=llm,
         ##     memory=chat_history[user.identifier],
         ## )
-        
+
         ## result = Conversation.run(input=query_str)
     except openai.error.InvalidRequestError as e:
         logger.error(f"🚨 LLM error: {e}")
@@ -575,12 +579,12 @@ def get_embeddings(
 
     return arr_documents, embeddings
 
+
 def retrieve_chat_summary(
     user_id: Optional[str] = None,
     query_str: Optional[str] = None,
     model: Optional[LLM_MODELS] = LLM_MODELS.GPT_35_TURBO,
 ):
-    summariztion: str = ""
     previous_summary: str = chat_history_summary[user_id]
     previous_summary = previous_summary if previous_summary else "No previous summary"
     system_prompt = [
@@ -597,10 +601,10 @@ Previous summary:
 
 Current user message:
 "{query_str}"
-""",     
+""",
         }
     ]
-    
+
     llm = OpenAI(
         temperature=0,
         model_name=model.model_name
@@ -608,23 +612,33 @@ Current user message:
         else LLM_MODELS.GPT_35_TURBO.model_name,
         prefix_messages=system_prompt,
     )
-    
+
     summary_prompt = "Update the summary to capture users intent."
     summary = llm(prompt=summary_prompt)
-    
+
     return summary
+
 
 def query_router(
     query_str: str,
 ):
     strategy = "None"
-    procedures = ["khai sinh", "thường trú", "kết hôn", "khai tử", "cấp lại cccd", "cấp cccd", "cấp căn cước", "cấp lại căn cước"]
-    
+    procedures = [
+        "khai sinh",
+        "thường trú",
+        "kết hôn",
+        "khai tử",
+        "cấp lại cccd",
+        "cấp cccd",
+        "cấp căn cước",
+        "cấp lại căn cước",
+    ]
+
     lower_query = query_str.lower()
-    
+
     for procedure in procedures:
         if procedure in lower_query:
             strategy = "RAG"
             return strategy
-    
+
     return strategy

@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import UploadFile
 from functools import partial
 from hashlib import sha256
@@ -5,12 +6,10 @@ from uuid import UUID
 import aiofiles
 import json
 import re
-from config import (
-    logger
-)
+from config import logger
 
-_snake_1 = partial(re.compile(r'(.)((?<![^A-Za-z])[A-Z][a-z]+)').sub, r'\1_\2')
-_snake_2 = partial(re.compile(r'([a-z0-9])([A-Z])').sub, r'\1_\2')
+_snake_1 = partial(re.compile(r"(.)((?<![^A-Za-z])[A-Z][a-z]+)").sub, r"\1_\2")
+_snake_2 = partial(re.compile(r"([a-z0-9])([A-Z])").sub, r"\1_\2")
 
 
 # ---------------------------------------
@@ -25,14 +24,17 @@ def snake_case(string: str) -> str:
 # ------------------------------
 def is_uuid(uuid: str) -> bool:
     uuid = str(uuid) if isinstance(uuid, UUID) else uuid
-    return re.match(r"^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$", uuid)
+    return re.match(
+        r"^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$",
+        uuid,
+    )
 
 
 # ---------------------------
 # Writes a file to disk async
 # ---------------------------
 async def save_file(file: UploadFile, file_path: str):
-    async with aiofiles.open(file_path, 'wb') as f:
+    async with aiofiles.open(file_path, "wb") as f:
         await f.write(await file.read())
 
 
@@ -47,9 +49,9 @@ def get_sha256(contents: bytes):
 # Get SHA256 hash of file
 # -----------------------
 def get_file_hash(
-        file_path: str,
+    file_path: str,
 ):
-    with open(file_path, 'rb') as f:
+    with open(file_path, "rb") as f:
         file_hash = sha256(f.read()).hexdigest()
 
     return file_hash
@@ -58,37 +60,48 @@ def get_file_hash(
 # -------------------
 # Clean up LLM output
 # -------------------
-def sanitize_output(
-    str_output: str
-):
+def sanitize_output(str_output: str):
     # Let's sanitize the JSON
-    res = str_output.replace("\n", '')
+    res = str_output.replace("\n", "")
 
     # If the first character is "?", remove it. Ran into this issue for some reason.
-    if res[0] == '?':
+    if res[0] == "?":
         res = res[1:]
 
     # check if response is valid json
     try:
         json.loads(res)
     except json.JSONDecodeError:
-        raise ValueError(f'LLM response is not valid JSON: {res}')
+        raise ValueError(f"LLM response is not valid JSON: {res}")
 
-    if 'message' not in res or 'tags' not in res or 'is_escalate' not in res:
-        raise ValueError(f'LLM response is missing required fields: {res}')
+    if "message" not in res or "tags" not in res or "is_escalate" not in res:
+        raise ValueError(f"LLM response is missing required fields: {res}")
 
-    logger.debug(f'Output: {res}')
+    logger.debug(f"Output: {res}")
     return res
+
+
+# -- -------------------
+# Add steps to response message
+# ---------------------
+
+
+def add_steps_to_response(steps: List[str], response_message: str) -> str:
+    if len(steps) == 0:
+        return response_message
+    for step, i in enumerate(steps):
+        response_message += f"\n\nBước {i + 1}: {step}"
+
+        return response_message
 
 
 # ------------------
 # Clean up LLM input
 # ------------------
-def sanitize_input(
-    str_input: str
-):
+def sanitize_input(str_input: str):
     # Escape single quotes that cause output JSON issues
     str_input = str_input.replace("'", "")
 
-    logger.debug(f'Input: {str_input}')
+    logger.debug(f"Input: {str_input}")
     return str_input
+
