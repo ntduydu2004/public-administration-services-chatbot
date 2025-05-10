@@ -1,5 +1,9 @@
 # 1. Load Markdown Files
 from langchain_community.document_loaders import DirectoryLoader
+from langchain import OpenAI
+from langchain.embeddings.openai import OpenAIEmbeddings
+from dotenv import load_dotenv
+import os
 
 path = "app/api/data/training_data/"
 loader = DirectoryLoader(path, glob="*.md")
@@ -11,7 +15,24 @@ from ragas.testset import TestsetGenerator
 generator_llm = "gpt-3.5-turbo"
 generator_embeddings = "text-embedding-ada-002"
 
-generator = TestsetGenerator(llm=generator_llm, embedding_model=generator_embeddings)
+env = os.getenv("ENV", None)
+
+if not env:
+    if os.path.exist('.env'):
+        load_dotenv(dotenv_path='.env')
+    else:
+        raise Exception(f"Env file file not found")
+
+API_KEY = os.getenv("OPENAI_API_KEY")
+
+embedding = OpenAIEmbeddings(openai_api_key=API_KEY)
+
+llm = OpenAI(
+    temparature = 0,
+    model_name = generator_llm
+)
+
+generator = TestsetGenerator(llm=llm, embedding_model=generator_embeddings)
 dataset = generator.generate_with_langchain_docs(datafile_text, testset_size=10)
 
 # 3. Save the Testset to a File
