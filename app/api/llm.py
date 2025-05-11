@@ -16,7 +16,6 @@ from typing import List, Union, Optional, Dict, Tuple, Any
 from helpers import (
     get_user_by_uuid_or_identifier,
     get_chat_session_by_uuid,
-    draw_diagram,
 )
 from models import (
     User,
@@ -31,6 +30,7 @@ from models import (
 from config import (
     CHANNEL_TYPE,
     DOCUMENT_TYPE,
+    ENABLE_CACHE_ANSWER,
     LLM_MODELS,
     LLM_DISTANCE_THRESHOLD,
     LLM_DEFAULT_TEMPERATURE,
@@ -114,6 +114,7 @@ def chat_query(
     context_str = None
     query_embeddings = None
     cached_answer = None
+    steps: List[str] = []
     MODEL_TOKEN_LIMIT = (
         model.token_limit if isinstance(model, OpenAI) else LLM_MAX_OUTPUT_TOKENS
     )
@@ -197,8 +198,10 @@ def chat_query(
     # ----------------
     # Check for cached answer
     # ----------------
-    cached_answer = get_cached_answer(query_str)
-    logger.debug(f"💬 Cached answer: {cached_answer}")
+    if ENABLE_CACHE_ANSWER:
+        cached_answer = get_cached_answer(query_str)
+        logger.debug(f"💬 Cached answer: {cached_answer}")
+
     if cached_answer:
         response_message, tags = cached_answer
     else:
@@ -294,16 +297,20 @@ def chat_query(
                         prefix_messages=system_prompt,
                     )
                 )
-                logger.debug("💬 LLM response: ", llm_response)
                 tags = llm_response.get("tags", [])
                 is_escalate = llm_response.get("is_escalate", False)
                 steps = llm_response.get("steps", [])
                 response_message = llm_response.get("message", None)
-                title = llm_response.get("title", "undefined")
-                store_answered_question(
-                    question=query_str, answer=response_message, tags=tags, steps=steps
-                )
-                response_message = add_steps_to_response(steps, response_message)
+                if ENABLE_CACHE_ANSWER:
+                    store_answered_question(
+                        question=query_str,
+                        answer=response_message,
+                        tags=tags,
+                        steps=steps,
+                    )
+                if len(steps) > 0:
+                    response_message = add_steps_to_response(steps, response_message)
+                    logger.debug(f"LLM response: {str(response_message)}")
             else:
                 logger.info("🚫📝 No similar nodes found, returning default response")
                 response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
@@ -326,6 +333,9 @@ def chat_query(
 
     meta["is_escalate"] = is_escalate
 
+    if len(steps) > 0:
+        meta["steps"] = steps
+
     if session_id:
         meta["session_id"] = session_id
 
@@ -335,8 +345,6 @@ def chat_query(
         project_id=project.id if project else None,
         channel=channel.value if isinstance(channel, CHANNEL_TYPE) else channel,
         user_message=user_message,
-        title=title,
-        instruction_steps=steps,
         embeddings=query_embeddings,
         token_count=token_count if token_count > 0 else None,
         response=response_message,
@@ -410,14 +418,13 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
   + "message" my response to the user. 
   + "tags" an array of short labels consisting a query type and a procedure type categorizing user input
   + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
-  + "title" a string, if the question is about instructing a process or instruction, return the name of that process. Otherwise, return string "undefined"
   + "steps", an array of steps of a process if the question is about instructing a process or a procedure. Otherwise, return an empty array. If there are multiple ways to do a process, I will not choose the one that uses search bar or any means of searching on the portal. Each step must be summarized to at most 10 words. For a phrase that cannot be replaced or changed like names, terminology..., it will be abbreviated.
 - I will only answer in Vietnamese
 
 [INSTRUCTIONS FOR TAGS]:
 - tags[0]: Response "Hỏi đáp" if the user is asking about requirements, documents, conditions, costs, etc.    
            Response "Hướng dẫn" If the user is asking for steps, instructions, process, etc.
-- tags[1]: Choose from the following list if the procedure is clearly mentioned: khai sinh, thường trú, kết hôn, khai tử, cấp căn cước, cấp lại căn cước. If none match then response "khác"
+- tags[1]: Choose from the following list if the procedure is clearly mentioned: [khai sinh, thường trú, kết hôn, khai tử, cấp căn cước, cấp lại căn cước]. If none match then response "khác"
 """,
         }
     ]

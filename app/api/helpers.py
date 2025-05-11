@@ -651,13 +651,12 @@ def get_project_by_uuid(
 # ------------------
 
 
-def draw_diagram(title: str, steps: List[str], output_path: str):
-    graph = Digraph(name=title, format="png")
+def draw_diagram(steps: List[str], output_path: str):
+    graph = Digraph(comment="Diagram Of Process")
 
     for step, index in zip(steps, range(len(steps))):
         graph.node(str(index), step)
         if index > 0:
             graph.edge(str(index - 1), str(index))
 
-    graph.render(filename=output_path, cleanup=True)
-    return graph
+    graph.render(filename=output_path, format="png", cleanup=True)

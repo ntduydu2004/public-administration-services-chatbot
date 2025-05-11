@@ -453,6 +453,7 @@ def process_webhook_telegram(webhook_data: dict):
         "username": message_from.get("username", None),
         "user_language": message_from.get("language_code", None),
         "user_firstname": chat.get("first_name", None),
+        "chat_id": chat.get("id", None),
         "user_message": message.get("text", None),
         "message_ts": datetime.fromtimestamp(message.get("date", None))
         if message.get("date", None)
@@ -473,10 +474,11 @@ def get_webhook(
     if channel == "telegram":
         rasa_webhook_url = f"{RASA_WEBHOOK_URL}/webhooks/{channel}/webhook"
         send_photo_url = (
-            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendphoto"
+            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendPhoto"
         )
         data = process_webhook_telegram(webhook_data)
         channel = CHANNEL_TYPE.TELEGRAM.value
+        chat_id = data["chat_id"]
         user_data = {
             "identifier": data["user_id"],
             "identifier_type": channel,
@@ -511,8 +513,7 @@ def get_webhook(
     )
 
     meta = chat_session.meta
-    steps = chat_session.instrcution_steps
-    title = chat_session.title
+    steps: List[str] = meta.get("steps")
 
     # -----------------------------------------
     # Lets add the LLM response to the metadata
@@ -525,10 +526,19 @@ def get_webhook(
     }
 
     if steps and len(steps):
-        output_path = "./image/diagram"
-        draw_diagram(title, steps, output_path)
-        with open(output_path, "rb") as file:
-            res = requests.post(send_photo_url, files={"file": file})
+        folder_path = os.getcwd()
+        output_path = os.path.join(folder_path, "images", "diagram")
+
+        # draw and save diagram in the following output path
+        draw_diagram(steps, output_path)
+
+        # Get the path to output file
+        output_file = output_path + ".png"
+
+        with open(output_file, "rb") as photo:
+            files = {"photo": photo}
+            data = {"chat_id": chat_id}
+            res = requests.post(send_photo_url, data=data, files=files)
             logger.debug(
                 f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res.text}"
             )

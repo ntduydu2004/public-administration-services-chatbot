@@ -16,3 +16,5 @@ app/rasa/.rasa
 app/rasa/.config
 app/rasa/.keras
 app/rasa/credentials.yml
+app/api/images/*
+

@@ -87,12 +87,17 @@ def sanitize_output(str_output: str):
 
 
 def add_steps_to_response(steps: List[str], response_message: str) -> str:
+    logger.debug(f"steps before being added: {steps}")
     if len(steps) == 0:
         return response_message
-    for step, i in enumerate(steps):
-        response_message += f"\n\nBước {i + 1}: {step}"
+    response_message += "\n"
+    for i, step in enumerate(steps):
+        response_message += f"Bước {str(i + 1)}: {step}\n"
+        logger.debug(f"step {i + 1}: {step}")
+        logger.debug(f"response_message: {response_message}")
 
-        return response_message
+    logger.debug(f"response message after being added: {response_message}")
+    return response_message
 
 
 # ------------------
@@ -104,4 +109,3 @@ def sanitize_input(str_input: str):
 
     logger.debug(f"Input: {str_input}")
     return str_input
-
