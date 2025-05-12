@@ -1,38 +1,55 @@
-from fastapi import (
-    FastAPI,
-    File,
-    Depends,
-    HTTPException,
-    UploadFile
-)
-from fastapi.openapi.utils import get_openapi
-from fastapi.staticfiles import StaticFiles
-from sqlmodel import Session, select
-
-from typing import (
-    List,
-    Optional,
-    Union,
-    Any
-)
-from datetime import datetime
-import requests
-import aiohttp
-import time
 import json
 import os
+import time
+from datetime import datetime
+from typing import Any, List, Optional, Union
+
+import aiohttp
+import requests
 
 # -----------
 # LLM imports
 # -----------
-from llm import (
-    chat_query
+from config import (
+    APP_DESCRIPTION,
+    APP_NAME,
+    APP_VERSION,
+    CHANNEL_TYPE,
+    ENTITY_STATUS,
+    FILE_UPLOAD_PATH,
+    RASA_WEBHOOK_URL,
+    TELEGRAM_ACCESS_TOKEN,
 )
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
+from helpers import (
+    # ----------------
+    # Helper functions
+    # ----------------
+    create_document_by_file_path,
+    create_org_by_org_or_uuid,
+    create_project_by_org,
+    draw_diagram,
+    get_document_by_uuid,
+    get_documents_by_project_and_org,
+    get_org_by_uuid_or_namespace,
+    get_project_by_uuid,
+    get_user_by_uuid_or_identifier,
+    get_users,
+)
+
+# -----------
+# LLM imports
+# -----------
+from llm import chat_query
 
 # ----------------
 # Database imports
 # ----------------
 from models import (
+    DocumentRead,
+    DocumentReadList,
     # ---------------
     # Database Models
     # ---------------
@@ -40,63 +57,23 @@ from models import (
     OrganizationCreate,
     OrganizationRead,
     OrganizationUpdate,
+    ProjectCreate,
+    ProjectRead,
+    ProjectReadList,
     User,
     UserCreate,
     UserRead,
     UserReadList,
     UserUpdate,
-    DocumentRead,
-    DocumentReadList,
-    ProjectCreate,
-    ProjectRead,
-    ProjectReadList,
-    ChatSessionResponse,
-    ChatSessionCreatePost,
     WebhookCreate,
     # ------------------
     # Database functions
     # ------------------
     get_engine,
-    get_session
-
+    get_session,
 )
-from helpers import (
-    # ----------------
-    # Helper functions
-    # ----------------
-    get_org_by_uuid_or_namespace,
-    get_project_by_uuid,
-    get_user_by_uuid_or_identifier,
-    get_users,
-    get_documents_by_project_and_org,
-    get_document_by_uuid,
-    create_org_by_org_or_uuid,
-    create_project_by_org
-)
-from util import (
-    save_file,
-    get_sha256,
-    is_uuid,
-    logger
-)
-# -----------
-# LLM imports
-# -----------
-from config import (
-    APP_NAME,
-    APP_VERSION,
-    APP_DESCRIPTION,
-    ENTITY_STATUS,
-    CHANNEL_TYPE,
-    LLM_MODELS,
-    LLM_DISTANCE_THRESHOLD,
-    LLM_DEFAULT_DISTANCE_STRATEGY,
-    LLM_MAX_OUTPUT_TOKENS,
-    LLM_MIN_NODE_LIMIT,
-    FILE_UPLOAD_PATH,
-    RASA_WEBHOOK_URL
-)
-
+from sqlmodel import Session, select
+from util import get_sha256, logger, save_file
 
 # ------------------
 # Mount static files
@@ -107,32 +84,38 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 # ---------------------
 # Health check endpoint
 # ---------------------
 @app.get("/health", include_in_schema=False)
 def health_check():
-    return {'status': 'ok'}
+    return {"status": "ok"}
 
 
 # ======================
 # ORGANIZATION ENDPOINTS
 # ======================
 
+
 # ---------------------
 # Get all organizations
 # ---------------------
 @app.get("/org", response_model=List[OrganizationRead])
 def read_organizations():
-    '''
+    """
     ## Get all active organizations
 
     Returns:
         List[OrganizationRead]: List of organizations
 
-    '''
+    """
     with Session(get_engine()) as session:
-        orgs = session.exec(select(Organization).where(Organization.status == ENTITY_STATUS.ACTIVE.value)).all()
+        orgs = session.exec(
+            select(Organization).where(
+                Organization.status == ENTITY_STATUS.ACTIVE.value
+            )
+        ).all()
         return orgs
 
 
@@ -145,9 +128,9 @@ def create_organization(
     session: Session = Depends(get_session),
     organization: Optional[OrganizationCreate] = None,
     namespace: Optional[str] = None,
-    display_name: Optional[str] = None
+    display_name: Optional[str] = None,
 ):
-    '''
+    """
 
     ### Creates a new organization
     ### <u>Args:</u>
@@ -171,12 +154,13 @@ def create_organization(
     print(response.json())
     ```
     </details>
-    '''
+    """
     # Create organization
     return create_org_by_org_or_uuid(
         organization=organization,
         namespace=namespace,
-        display_name=display_name, session=session
+        display_name=display_name,
+        session=session,
     )
 
 
@@ -184,12 +168,7 @@ def create_organization(
 # Get an organization by UUID
 # ---------------------------
 @app.get("/org/{organization_id}", response_model=Union[OrganizationRead, Any])
-def read_organization(
-    *,
-    session: Session = Depends(get_session),
-    organization_id: str
-):
-
+def read_organization(*, session: Session = Depends(get_session), organization_id: str):
     organization = get_org_by_uuid_or_namespace(organization_id, session=session)
 
     return organization
@@ -203,9 +182,8 @@ def update_organization(
     *,
     session: Session = Depends(get_session),
     organization_id: str,
-    organization: OrganizationUpdate
+    organization: OrganizationUpdate,
 ):
-
     org = get_org_by_uuid_or_namespace(organization_id, session=session)
 
     org.update(organization.dict(exclude_unset=True))
@@ -216,20 +194,18 @@ def update_organization(
 # Project endpoints
 # =================
 
+
 # -----------------------
 # Get all projects by org
 # -----------------------
 @app.get("/project", response_model=List[ProjectReadList])
-def read_projects(
-    *,
-    session: Session = Depends(get_session),
-    organization_id: str
-):
-
+def read_projects(*, session: Session = Depends(get_session), organization_id: str):
     organization = get_org_by_uuid_or_namespace(organization_id, session=session)
 
     if not organization.projects:
-        raise HTTPException(status_code=404, detail='No projects found for organization')
+        raise HTTPException(
+            status_code=404, detail="No projects found for organization"
+        )
 
     return organization.projects
 
@@ -242,12 +218,10 @@ def create_project(
     *,
     session: Session = Depends(get_session),
     organization_id: str,
-    project: ProjectCreate
+    project: ProjectCreate,
 ):
     return create_project_by_org(
-        organization_id=organization_id,
-        project=project,
-        session=session
+        organization_id=organization_id, project=project, session=session
     )
 
 
@@ -256,18 +230,17 @@ def create_project(
 # -----------------------------
 @app.get("/project/{project_id}", response_model=Union[ProjectRead, Any])
 def read_project(
-    *,
-    session: Session = Depends(get_session),
-    organization_id: str,
-    project_id: str
+    *, session: Session = Depends(get_session), organization_id: str, project_id: str
 ):
-
-    return get_project_by_uuid(uuid=project_id, organization_id=organization_id, session=session)
+    return get_project_by_uuid(
+        uuid=project_id, organization_id=organization_id, session=session
+    )
 
 
 # ==================
 # DOCUMENT ENDPOINTS
 # ==================
+
 
 # ---------------
 # Upload document
@@ -280,11 +253,15 @@ async def upload_document(
     project_id: str,
     url: Optional[str] = None,
     file: Optional[UploadFile] = File(...),
-    overwrite: Optional[bool] = True
+    overwrite: Optional[bool] = True,
 ):
     organization = get_org_by_uuid_or_namespace(organization_id, session=session)
-    project = get_project_by_uuid(uuid=project_id, organization_id=organization_id, session=session)
-    file_root_path = os.path.join(FILE_UPLOAD_PATH, str(organization.uuid), str(project.uuid))
+    project = get_project_by_uuid(
+        uuid=project_id, organization_id=organization_id, session=session
+    )
+    file_root_path = os.path.join(
+        FILE_UPLOAD_PATH, str(organization.uuid), str(project.uuid)
+    )
 
     file_version = 1
 
@@ -292,33 +269,38 @@ async def upload_document(
     # Enforce XOR for url/file
     # ------------------------
     if url and file:
-        raise HTTPException(status_code=400, detail='You can only upload a file OR provide a URL, not both')
+        raise HTTPException(
+            status_code=400,
+            detail="You can only upload a file OR provide a URL, not both",
+        )
 
     # --------------------
     # Upload file from URL
     # --------------------
     if url:
-        file_name = url.split('/')[-1]
+        file_name = url.split("/")[-1]
         file_upload_path = os.path.join(file_root_path, file_name)
         file_exists = os.path.isfile(file_upload_path)
 
         if file_exists:
-            file_name = f'{file_name}_{int(time.time())}'
+            file_name = f"{file_name}_{int(time.time())}"
             file_upload_path = os.path.join(file_root_path, file_name)
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
                 if resp.status != 200:
-                    raise HTTPException(status_code=400, detail=f'Could not download file from {url}')
+                    raise HTTPException(
+                        status_code=400, detail=f"Could not download file from {url}"
+                    )
 
-                with open(file_upload_path, 'wb') as f:
+                with open(file_upload_path, "wb") as f:
                     while True:
                         chunk = await resp.content.read(1024)
                         if not chunk:
                             break
                         f.write(chunk)
 
-        file_contents = open(file_upload_path, 'rb').read()
+        file_contents = open(file_upload_path, "rb").read()
         file_hash = get_sha256(contents=file_contents)
 
     # -----------------------
@@ -330,7 +312,7 @@ async def upload_document(
         file_exists = os.path.isfile(file_upload_path)
 
         if file_exists:
-            file_name = f'{file_name}_{int(time.time())}'
+            file_name = f"{file_name}_{int(time.time())}"
             file_upload_path = os.path.join(file_root_path, file_name)
 
         file_contents = await file.read()
@@ -345,7 +327,7 @@ async def upload_document(
         file_version=file_version,
         url=url,
         overwrite=overwrite,
-        session=session
+        session=session,
     )
     return document_obj
 
@@ -355,12 +337,12 @@ async def upload_document(
 # --------------------------------
 @app.get("/document", response_model=List[DocumentReadList])
 def read_documents(
-    *,
-    session: Session = Depends(get_session),
-    organization_id: str,
-    project_id: str
+    *, session: Session = Depends(get_session), organization_id: str, project_id: str
 ):
-    return get_documents_by_project_and_org(project_id=project_id, organization_id=organization_id, session=session)
+    return get_documents_by_project_and_org(
+        project_id=project_id, organization_id=organization_id, session=session
+    )
+
 
 # ----------------------
 # Get a document by UUID
@@ -371,14 +353,20 @@ def read_document(
     session: Session = Depends(get_session),
     organization_id: str,
     project_id: str,
-    document_id: str
+    document_id: str,
 ):
-    return get_document_by_uuid(uuid=document_id, project_id=project_id, organization_id=organization_id, session=session)
+    return get_document_by_uuid(
+        uuid=document_id,
+        project_id=project_id,
+        organization_id=organization_id,
+        session=session,
+    )
 
 
 # ==============
 # USER ENDPOINTS
 # ==============
+
 
 # -------------
 # Get all users
@@ -395,28 +383,15 @@ def read_users(
 # Create a user
 # -------------
 @app.post("/user", response_model=UserRead)
-def create_user(
-    *,
-    session: Session = Depends(get_session),
-    user: UserCreate
-):
-
-    return create_user(
-        user=user,
-        session=session
-    )
+def create_user(*, session: Session = Depends(get_session), user: UserCreate):
+    return create_user(user=user, session=session)
 
 
 # ------------------
 # Get a user by UUID
 # ------------------
 @app.get("/user/{user_uuid}", response_model=UserRead)
-def read_user(
-    *,
-    session: Session = Depends(get_session),
-    user_id: str
-):
-
+def read_user(*, session: Session = Depends(get_session), user_id: str):
     return get_user_by_uuid_or_identifier(id=user_id, session=session)
 
 
@@ -425,7 +400,6 @@ def read_user(
 # ---------------------
 @app.put("/user/{user_uuid}", response_model=UserRead)
 def update_user(*, user_uuid: str, user: UserUpdate):
-
     # Get user by UUID
     user = User.get(uuid=user_uuid)
 
@@ -436,7 +410,7 @@ def update_user(*, user_uuid: str, user: UserUpdate):
 
     # If user doesn't exist, return 404
     else:
-        raise HTTPException(status_code=404, detail=f'User {user_uuid} not found!')
+        raise HTTPException(status_code=404, detail=f"User {user_uuid} not found!")
 
 
 # =============
@@ -469,90 +443,114 @@ def process_webhook_telegram(webhook_data: dict):
         }
     }
     """
-    message = webhook_data.get('message', None)
-    chat = message.get('chat', None)
-    message_from = message.get('from', None)
+    message = webhook_data.get("message", None)
+    chat = message.get("chat", None)
+    message_from = message.get("from", None)
     return {
-        'update_id': webhook_data.get('update_id', None),
-        'message_id': message.get('message_id', None),
-        'user_id': message_from.get('id', None),
-        'username': message_from.get('username', None),
-        'user_language': message_from.get('language_code', None),
-        'user_firstname': chat.get('first_name', None),
-        'user_message': message.get('text', None),
-        'message_ts': datetime.fromtimestamp(message.get('date', None)) if message.get('date', None) else None,
-        'message_type': chat.get('type', None)
+        "update_id": webhook_data.get("update_id", None),
+        "message_id": message.get("message_id", None),
+        "user_id": message_from.get("id", None),
+        "username": message_from.get("username", None),
+        "user_language": message_from.get("language_code", None),
+        "user_firstname": chat.get("first_name", None),
+        "chat_id": chat.get("id", None),
+        "user_message": message.get("text", None),
+        "message_ts": datetime.fromtimestamp(message.get("date", None))
+        if message.get("date", None)
+        else None,
+        "message_type": chat.get("type", None),
     }
 
 
 @app.post("/webhooks/{channel}/webhook")
 def get_webhook(
-    *,
-    session: Session = Depends(get_session),
-    channel: str,
-    webhook: WebhookCreate
+    *, session: Session = Depends(get_session), channel: str, webhook: WebhookCreate
 ):
     webhook_data = webhook.dict()
 
     # --------------------
     # Get webhook metadata
     # --------------------
-    if channel == 'telegram':
-        rasa_webhook_url = f'{RASA_WEBHOOK_URL}/webhooks/{channel}/webhook'
+    if channel == "telegram":
+        rasa_webhook_url = f"{RASA_WEBHOOK_URL}/webhooks/{channel}/webhook"
+        send_photo_url = (
+            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendPhoto"
+        )
         data = process_webhook_telegram(webhook_data)
         channel = CHANNEL_TYPE.TELEGRAM.value
+        chat_id = data["chat_id"]
         user_data = {
-            'identifier': data['user_id'],
-            'identifier_type': channel,
-            'first_name': data['user_firstname'],
-            'language': data['user_language']
+            "identifier": data["user_id"],
+            "identifier_type": channel,
+            "first_name": data["user_firstname"],
+            "language": data["user_language"],
         }
         session_metadata = {
-            'update_id': data['update_id'],
-            'username': data['username'],
-            'message_id': data['user_message'],
-            'msg_ts': data['message_ts'],
-            'msg_type': data['message_type'],
+            "update_id": data["update_id"],
+            "username": data["username"],
+            "message_id": data["user_message"],
+            "msg_ts": data["message_ts"],
+            "msg_type": data["message_type"],
         }
-        user_message = data['user_message']
+        user_message = data["user_message"]
     else:
         # Not a valid channel, return 404
-        raise HTTPException(status_code=404, detail=f'Channel {channel} not a valid webhook channel!')
+        raise HTTPException(
+            status_code=404, detail=f"Channel {channel} not a valid webhook channel!"
+        )
 
     if not user_message or not user_message.strip():
         logger.warning("⚠️ Empty query_str from Telegram message. Skipping.")
         return {"status": "ok", "message": "Empty input ignored."}
-    
-    
+
     chat_session = chat_query(
         user_message,
         session=session,
         channel=channel,
-        identifier=user_data['identifier'],
+        identifier=user_data["identifier"],
         user_data=user_data,
-        meta=session_metadata
+        meta=session_metadata,
     )
 
     meta = chat_session.meta
+    steps: List[str] = meta.get("steps")
 
     # -----------------------------------------
     # Lets add the LLM response to the metadata
     # -----------------------------------------
-    webhook_data['message']['meta'] = {
-        'response': chat_session.response if chat_session.response else None,
-        'tags': meta['tags'] if 'tags' in meta else None,
-        'is_escalate': meta['is_escalate'] if 'is_escalate' in meta else False,
-        'session_id': meta['session_id'] if 'session_id' in meta else None
-
+    webhook_data["message"]["meta"] = {
+        "response": chat_session.response if chat_session.response else None,
+        "tags": meta["tags"] if "tags" in meta else None,
+        "is_escalate": meta["is_escalate"] if "is_escalate" in meta else False,
+        "session_id": meta["session_id"] if "session_id" in meta else None,
     }
 
+    if steps and len(steps):
+        folder_path = os.getcwd()
+        output_path = os.path.join(folder_path, "images", "diagram")
+
+        # draw and save diagram in the following output path
+        draw_diagram(steps, output_path)
+
+        # Get the path to output file
+        output_file = output_path + ".png"
+
+        with open(output_file, "rb") as photo:
+            files = {"photo": photo}
+            data = {"chat_id": chat_id}
+            res = requests.post(send_photo_url, data=data, files=files)
+            logger.debug(
+                f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res.text}"
+            )
     # -----------------------------------
     # Forward the webhook to Rasa webhook
     # -----------------------------------
     res = requests.post(rasa_webhook_url, data=json.dumps(webhook_data))
-    logger.debug(f'[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nRasa webhook response: {res.text}')
+    logger.debug(
+        f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nRasa webhook response: {res.text}"
+    )
 
-    return {'status': 'ok'}
+    return {"status": "ok"}
 
 
 # ------------------
@@ -564,7 +562,5 @@ _schema = get_openapi(
     version=APP_VERSION,
     routes=app.routes,
 )
-_schema['info']['x-logo'] = {
-    'url': '/static/img/rasagpt-logo-1.png'
-}
+_schema["info"]["x-logo"] = {"url": "/static/img/rasagpt-logo-1.png"}
 app.openapi_schema = _schema

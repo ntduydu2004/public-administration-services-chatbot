@@ -1,25 +1,13 @@
 from fastapi import HTTPException
+from graphviz import Digraph
 from uuid import UUID
 import os
 
-from typing import (
-    Optional,
-    Union
-)
-from config import (
-    FILE_UPLOAD_PATH,
-    ENTITY_STATUS,
-    logger
-)
+from typing import List, Optional, Union
+from config import FILE_UPLOAD_PATH, ENTITY_STATUS
 
-from util import (
-    is_uuid,
-    get_file_hash
-)
-from sqlmodel import (
-    Session,
-    select
-)
+from util import is_uuid, get_file_hash
+from sqlmodel import Session, select
 from datetime import datetime
 from models import (
     Organization,
@@ -31,7 +19,7 @@ from models import (
     ProjectCreate,
     Document,
     Node,
-    ChatSession
+    ChatSession,
 )
 
 # ================
@@ -390,7 +378,7 @@ def create_document_nodes(
             embeddings=vec,
             text=doc,
             token_count=get_token_count(doc),
-            meta=metadata
+            meta=metadata,
         )
         if session:
             session.add(node)
@@ -656,3 +644,19 @@ def get_project_by_uuid(
         )
 
     return project
+
+
+# -----------------
+# Diagram functions
+# ------------------
+
+
+def draw_diagram(steps: List[str], output_path: str):
+    graph = Digraph(comment="Diagram Of Process")
+
+    for step, index in zip(steps, range(len(steps))):
+        graph.node(str(index), step)
+        if index > 0:
+            graph.edge(str(index - 1), str(index))
+
+    graph.render(filename=output_path, format="png", cleanup=True)
