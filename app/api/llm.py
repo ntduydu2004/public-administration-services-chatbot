@@ -639,6 +639,13 @@ def query_router(
         "cấp cccd",
         "cấp căn cước",
         "cấp lại căn cước",
+        "giám hộ",
+        "nhận con nuôi",
+        "đăng ký",
+        "thủ tục",
+        "hướng dẫn",
+        "cơ quan",
+        "cổng dịch vụ công"
     ]
 
     lower_query = query_str.lower()
