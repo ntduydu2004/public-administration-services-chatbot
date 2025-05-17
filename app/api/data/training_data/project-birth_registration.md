@@ -4,7 +4,8 @@ Tiêu đề: Đăng ký khai sinh
 
 Mô tả: Thông tin chi tiết và hướng dẫn người dân thực hiện thủ tục đăng ký khai sinh cho trẻ em trên cổng dịch vụ công.
 
-**Các bước thực hiện**
+**Các bước thực hiện thủ tục đăng ký khai sinh cho trẻ em trên cổng dịch vụ công**
+
 Bước 1: Truy cập vào Cổng Dịch vụ công Quốc gia tại địa chỉ <www.dichvucong.gov.vn>.
 Bước 2: Từ trang chủ, chọn "Có con nhỏ" ở phần "Công dân", sau đó nhấn vào mục "Khai sinh".
 Bước 3: Chọn thủ tục "Đăng ký khai sinh".
@@ -12,12 +13,19 @@ Bước 4: Chọn cơ quan thực hiện thủ tục.
 Bước 5: Điền đầy đủ thông tin và nộp thủ tục. Sau đó, theo dõi tình trạng hồ sơ của bạn trên cổng dịch vụ công.
 
 **Chi tiết thủ tục**
+
 1. Mã thủ tục: 1.001193
+
 2. Số quyết định: 85/QĐ-BTP
+
 3. Tên thủ tục: Thủ tục đăng ký khai sinh
+
 4. Cấp thực hiện: Cấp Xã
+
 5. Loại thủ tục: TTHC được luật giao quy định chi tiết
+
 6. Lĩnh vực: Hộ tịch
+
 7. Trình tự thực hiện:
 - Nếu lựa chọn hình thức nộp hồ sơ trực tiếp, người có yêu cầu đăng ký khai sinh nộp hồ sơ đăng ký khai sinh tại Bộ phận một cửa của UBND cấp xã có thẩm quyền, nộp lệ phí nếu thuộc trường hợp phải nộp lệ phí đăng ký khai sinh, nộp phí cấp bản sao Giấy khai sinh nếu có yêu cầu cấp bản sao Giấy khai sinh.
 - Nếu lựa chọn hình thức nộp hồ sơ trực tuyến, người có yêu cầu đăng ký khai sinh truy cập Cổng dịch vụ công quốc gia hoặc Cổng dịch vụ công cấp tỉnh, đăng ký tài khoản (nếu chưa có tài khoản), xác thực người dùng theo hướng dẫn, đăng nhập vào hệ thống, xác định đúng Ủy ban nhân dân cấp xã có thẩm quyền.
@@ -44,6 +52,7 @@ Sau khi lập biên bản, Ủy ban nhân dân cấp xã tiến hành niêm yế
 - Trường hợp trẻ chưa xác định được cha thì họ, dân tộc, quê quán, quốc tịch của con được xác định theo họ, dân tộc, quê quán, quốc tịch của mẹ, phần ghi về cha của trẻ để trống. Nếu vào thời điểm đăng ký khai sinh người cha yêu cầu làm thủ tục nhận con thì kết hợp giải quyết việc nhận con và đăng ký khai sinh.
 - Trường hợp trẻ chưa xác định được mẹ mà khi đăng ký khai sinh cha yêu cầu làm thủ tục nhận con thì kết hợp giải quyết việc nhận con và đăng ký khai sinh, phần khai về mẹ của trẻ để trống.
 - Trường hợp trẻ không thuộc diện bị bỏ rơi, chưa xác định được cả cha và mẹ thì thực hiện tương tự như đăng ký khai sinh cho trẻ bị bỏ rơi, nhưng trong Sổ hộ tịch ghi rõ “Trẻ chưa xác định được cha, mẹ”.
+
 8. Thành phần hồ sơ bao gồm:
 - Tờ khai đăng ký khai sinh theo mẫu (nếu người có yêu cầu lựa chọn nộp hồ sơ theo hình thức trực tiếp hoặc gửi hồ sơ qua hệ thống bưu chính)
 - Mẫu hộ tịch điện tử tương tác đăng ký khai sinh (do người yêu cầu cung cấp thông tin theo hướng dẫn trên Cổng dịch vụ công, nếu người có yêu cầu lựa chọn nộp hồ sơ theo hình thức trực tuyến)
@@ -75,10 +84,15 @@ Cơ quan đăng ký hộ tịch từ chối giải quyết hoặc đề nghị c
 + Người yêu cầu đăng ký hộ tịch có thể nộp bản sao chứng thực từ bản chính hoặc bản sao được cấp từ sổ gốc hoặc bản chụp kèm theo bản chính giấy tờ để đối chiếu. Trường hợp người yêu cầu nộp bản chụp kèm theo bản chính giấy tờ thì người tiếp nhận có trách nhiệm kiểm tra, đối chiếu bản chụp với bản chính và ký xác nhận, không được yêu cầu người đi đăng ký nộp bản sao giấy tờ đó.
 + Người tiếp nhận có trách nhiệm tiếp nhận đúng, đủ hồ sơ đăng ký theo quy định của pháp luật hộ tịch và pháp luật nuôi con nuôi, không được yêu cầu người đăng ký nộp thêm giấy tờ mà pháp luật hộ tịch và pháp luật nuôi con nuôi không quy định phải nộp.
 Người tiếp nhận hồ sơ thực hiện khai thác thông tin trong Cơ sở dữ liệu quốc gia về dân cư theo quy định pháp luật nếu người yêu cầu đăng ký hộ tịch đã cung cấp họ, chữ đệm, tên, ngày tháng năm sinh số định danh cá nhân/thẻ căn cước công dân/thẻ căn cước/chứng minh nhân dân/căn cước điện tử. Trường hợp các thông tin cần khai thác không có trong Cơ sở dữ liệu quốc gia về dân cư thì đề nghị người yêu cầu kê khai đầy đủ.
+
 9. Đối tượng thực hiện: Công dân Việt Nam, Người Việt Nam định cư ở nước ngoài
+
 10. Cơ quan thực hiện: Ủy ban nhân dân cấp xã
+
 11. Cơ quan có thẩm quyền: Ủy ban nhân dân cấp xã
+
 12. Kết quả thực hiện: Giấy khai sinh, Bản sao giấy khai sinh, Bản điện tử Giấy khai sinh
+
 13. Yêu cầu, điều kiện thực hiện: Không
 
 **Câu hỏi thường gặp**

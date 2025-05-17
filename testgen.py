@@ -22,7 +22,7 @@ if not env:
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 
-generator_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-3.5-turbo"))
+generator_llm = LangchainLLMWrapper(ChatOpenAI(model="gpt-4.1-nano"))
 generator_embeddings = LangchainEmbeddingsWrapper(OpenAIEmbeddings())
 
 from ragas.testset.transforms.extractors.llm_based import NERExtractor
@@ -38,8 +38,28 @@ personas = [
         role_description="A student who is curious about the world and wants to learn more about different procedures.",
     ),
     Persona(
-        name ="citizen",
-        role_description="A citizen who is having trouble with registering procedures on public service portal.",
+        name="civillian",
+        role_description="A civillian who is having trouble with registering procedures on public service portal.",
+    ),
+    Persona(
+        name="retired veteran",
+        role_description="A retired military officer looking to claim retirement and veteran benefits through public services.",
+    ),
+    Persona(
+        name="young parent",
+        role_description="A parent trying to apply for birth certificate and health insurance for their newborn.",
+    ),
+    Persona(
+        name="tech-savvy helper",
+        role_description="A tech-savvy person helping family members navigate complicated e-government services and digital platforms.",
+    ),
+    Persona(
+        name="immigrant worker",
+        role_description="A foreign worker in Vietnam looking for help with residency procedures.",
+    ),
+    Persona(
+        name="government clerk",
+        role_description="A frontline public servant who explains administrative procedures and helps people complete service requests accurately.",
     ),
 ]
 
@@ -64,7 +84,7 @@ async def language_adapt():
 
     dataset = generator.generate_with_langchain_docs(
         docs[:],
-        testset_size=5,
+        testset_size=500,
         transforms=transforms,
         query_distribution=distribution,
     )

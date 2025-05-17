@@ -4,7 +4,8 @@ Tiêu đề: Đăng ký cấp lại Căn cước công dân
 
 Mô tả: Hướng dẫn người dân thực hiện thủ tục đăng ký cấp lại Căn cước công dân.
 
-**Các bước thực hiện**
+**Các bước thực hiện thủ tục đăng ký cấp lại Căn cước công dân trên cổng dịch vụ công**
+
 Bước 1: Truy cập vào Cổng Dịch vụ công Quốc gia tại địa chỉ <www.dichvucong.gov.vn>.
 Bước 2: Từ trang chủ, chọn "Cư trú và giấy tờ tùy thân" ở phần "Công dân", sau đó nhấn vào mục "Căn cước công dân/Chứng minh nhân dân".
 Bước 3: Chọn thủ tục "cấp lại thẻ căn cước".
@@ -12,6 +13,7 @@ Bước 4: Chọn cơ quan thực hiện thủ tục.
 Bước 5: Điền đầy đủ thông tin và nộp thủ tục. Sau đó, theo dõi tình trạng hồ sơ của bạn trên cổng dịch vụ công.
 
 **Câu hỏi thường gặp**
+
 1. Thẩm quyền cấp, đổi, cấp lại thẻ Căn cước công dân thuộc về ai?
 - Theo quy định tại Điều 27 Luật Căn cước công dân thì Thủ trưởng cơ quan quản lý căn cước công dân của Bộ Công an có thẩm quyền cấp, đổi, cấp lại thẻ Căn cước công dân (Cục trưởng Cục Cảnh sát quản lý hành chính về trật tự xã hội).
 

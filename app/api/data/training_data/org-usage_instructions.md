@@ -2,7 +2,8 @@
 
 Tiêu đề: Hướng dẫn sử dụng
 
-**Hướng dẫn chung**
+**Hướng dẫn chung về thực hiện thủ tục hành chính trên Cổng Dịch vụ công Quốc gia**
+
 Bao gồm 4 bước để thực hiện 1 thủ tục hành chính, dịch vụ công trực tuyến trên Cổng Dịch vụ công Quốc gia:
 Bước 1: Tra cứu thủ tục hành chính, dịch vụ công
 Người dân, doanh nghiệp có 3 cách để tiếp cận thủ tục hành chính, dịch vụ công, đó là: Tìm kiếm theo từ khóa ở trang chủ, trang công dân, trang doanh nghiệp, chọn thủ tục hành chính từ sự kiện của công dân và doanh nghiệp, chọn từ danh sách dịch vụ công trực tuyến
@@ -16,6 +17,7 @@ Sau khi Người dân, doanh nghiệp đăng nhập thành công, Cổng Dịch 
 Người dân, doanh nghiệp tra cứu tình trạng hồ sơ theo mã số hồ sơ được cấp trên Cổng Dịch vụ công Quốc gia, để theo dõi chi tiết tiến trình xử lý, quản lý dữ liệu đầu vào, đầu ra của hồ sơ thì người dân thực hiện đăng nhập để xem chi tiết.
 
 **Hướng dẫn tìm kiếm cơ quan thực hiện thủ tục**
+
 Để tìm kiếm cơ quan thực hiện thủ tục, người dùng cần chọn các tiêu chí sau:
 - Tỉnh/thành phố hoặc Bộ ngành: Giúp giới hạn phạm vi tìm kiếm.
 - Quận/huyện hoặc Sở: Lọc kết quả theo cấp hành chính nhỏ hơn.

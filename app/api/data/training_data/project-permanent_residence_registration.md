@@ -4,7 +4,8 @@ Tiêu đề: Đăng ký thường trú
 
 Mô tả: Hướng dẫn người dân thực hiện thủ tục đăng ký thường trú.
 
-**Các bước thực hiện**
+**Các bước thực hiện thủ tục đăng ký thường trú trên cổng dịch vụ công**
+
 Bước 1: Truy cập vào Cổng Dịch vụ công Quốc gia tại địa chỉ <www.dichvucong.gov.vn>.
 Bước 2: Từ trang chủ, chọn "Cư trú và giấy tờ tùy thân" ở phần "Công dân", sau đó nhấn vào mục "Hộ khẩu".
 Bước 3: Chọn thủ tục "Đăng ký thường trú".
@@ -12,12 +13,19 @@ Bước 4: Chọn cơ quan thực hiện thủ tục.
 Bước 5: Điền đầy đủ thông tin và nộp thủ tục. Sau đó, theo dõi tình trạng hồ sơ của bạn trên cổng dịch vụ công.
 
 **Chi tiết thủ tục**
+
 1. Mã thủ tục: 1.004222
+
 2. Số quyết định: 370
+
 3. Tên thủ tục: Đăng ký thường trú
+
 4. Cấp thực hiện: Cấp Xã
+
 5. Loại thủ tục: TTHC được luật giao quy định chi tiết
+
 6. Lĩnh vực: Đăng ký, quản lý cư trú
+
 7. Trình tự thực hiện:
 Bước 1: Cá nhân chuẩn bị hồ sơ theo quy định của pháp luật.
 Bước 2: Cá nhân nộp hồ sơ đến Công an cấp xã.
@@ -29,6 +37,7 @@ Bước 3: Khi tiếp nhận hồ sơ đăng ký thường trú, cơ quan đăng
 - Trường hợp hồ sơ không đủ điều kiện thì từ chối và cấp Phiếu từ chối tiếp nhận, giải quyết hồ sơ (Mẫu CT06 ban hành kèm theo Thông tư số 66/2023/TT- BCA) cho người đăng ký.
 Bước 4: Cá nhân nộp lệ phí đăng ký thường trú theo quy định.
 Bước 5: Căn cứ theo ngày hẹn trên Phiếu tiếp nhận hồ sơ và hẹn trả kết quả để nhận thông báo kết quả giải quyết thủ tục đăng ký cư trú (nếu có).
+
 8. Thành phần hồ sơ bao gồm:
 * Người sinh sống, người làm nghề lưu động trên phương tiện được đăng ký thường trú tại phương tiện, hồ sơ gồm:
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
@@ -66,8 +75,12 @@ Trường hợp người Việt Nam định cư ở nước ngoài về Việt N
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Đối với Công an nhân dân: Giấy giới thiệu của Thủ trưởng đơn vị quản lý trực tiếp ghi rõ nội dung để làm thủ tục đăng ký thường trú và đơn vị có chỗ ở cho cán bộ chiến sĩ (ký tên, đóng dấu).
 - Đối với Quân đội nhân dân: Giấy giới thiệu đăng ký thường trú của đơn vị cấp trung đoàn và tương đương trở lên.
+
 9. Đối tượng thực hiện: Công dân Việt Nam, Tổ chức (không bao gồm doanh nghiệp, HTX)
+
 10. Cơ quan thực hiện: Công an Xã
+
 11. Cơ quan có thẩm quyền: Công an Xã
+
 12. Kết quả thực hiện: Cập nhật thông tin trong Cơ sở dữ liệu quốc gia về dân cư, Thông báo kết quả giải quyết thủ tục về cư trú, hủy bỏ thủ tục về cư trú, Cập nhật thông tin trong Cơ sở dữ liệu về cư trú, Phiếu từ chối tiếp nhận, giải quyết hồ sơ (lĩnh vực cư trú)
 13. Yêu cầu, điều kiện thực hiện: Người thực hiện thủ tục đã được thu thập, cập nhật thông tin công dân vào Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu về cư trú
