@@ -46,7 +46,7 @@ services:
     env_file:
       - .env
     environment:
-      NGROK_CONFIG: /etc/ngrok.yml
+      NGROK_CONFIG: ${NGROK_CONFIG:-}
       NGROK_AUTH_TOKEN: ${NGROK_AUTH_TOKEN:-}
       NGROK_DEBUG: ${NGROK_DEBUG:-true}
       NGROK_API_KEY: ${NGROK_API_KEY:-}

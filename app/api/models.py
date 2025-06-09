@@ -439,7 +439,7 @@ class ChatSession(BaseModel, table=True):
     )
     user_id: int = Field(default=None, foreign_key="user.id")
     project_id: int = Field(default=None, foreign_key="project.id")
-    channel: CHANNEL_TYPE = Field(default=CHANNEL_TYPE.TELEGRAM)
+    channel: CHANNEL_TYPE = Field(default=CHANNEL_TYPE.SLACK)
     user_message: str = Field(default=None)
     token_count: Optional[int] = Field(default=None)
     embeddings: Optional[List[float]] = Field(
@@ -462,7 +462,7 @@ class ChatSession(BaseModel, table=True):
 class ChatSessionCreatePost(SQLModel):
     project_id: Optional[str] = ""
     organization_id: Optional[str] = "pepe"
-    channel: Optional[CHANNEL_TYPE] = CHANNEL_TYPE.TELEGRAM
+    channel: Optional[CHANNEL_TYPE] = CHANNEL_TYPE.SLACK
     query: Optional[str] = "What is the weather like in London right now?"
     identifier: Optional[str] = "@username"
     distance_strategy: Optional[str] = LLM_DEFAULT_DISTANCE_STRATEGY

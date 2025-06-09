@@ -18,7 +18,7 @@ from config import (
     ENTITY_STATUS,
     FILE_UPLOAD_PATH,
     RASA_WEBHOOK_URL,
-    TELEGRAM_ACCESS_TOKEN,
+    SLACK_ACCESS_TOKEN,
 )
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.openapi.utils import get_openapi
@@ -418,9 +418,9 @@ def update_user(*, user_uuid: str, user: UserUpdate):
 # =============
 
 
-def process_webhook_telegram(webhook_data: dict):
+def process_webhook_slack(webhook_data: dict):
     """
-    Telegram example response:
+    Slack example response:
     {
         "update_id": 248146407,
         "message": {
@@ -471,13 +471,11 @@ def get_webhook(
     # --------------------
     # Get webhook metadata
     # --------------------
-    if channel == "telegram":
+    if channel == "slack":
         rasa_webhook_url = f"{RASA_WEBHOOK_URL}/webhooks/{channel}/webhook"
-        send_photo_url = (
-            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendPhoto"
-        )
-        data = process_webhook_telegram(webhook_data)
-        channel = CHANNEL_TYPE.TELEGRAM.value
+        send_photo_url = f"https://api.telegram.org/bot{SLACK_ACCESS_TOKEN}/sendPhoto"
+        data = process_webhook_slack(webhook_data)
+        channel = CHANNEL_TYPE.SLACK.value
         chat_id = data["chat_id"]
         user_data = {
             "identifier": data["user_id"],
@@ -500,7 +498,7 @@ def get_webhook(
         )
 
     if not user_message or not user_message.strip():
-        logger.warning("⚠️ Empty query_str from Telegram message. Skipping.")
+        logger.warning("⚠️ Empty query_str from Slack message. Skipping.")
         return {"status": "ok", "message": "Empty input ignored."}
 
     chat_session = chat_query(
@@ -540,7 +538,7 @@ def get_webhook(
             data = {"chat_id": chat_id}
             res = requests.post(send_photo_url, data=data, files=files)
             logger.debug(
-                f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res.text}"
+                f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\Slack response: {res.text}"
             )
     # -----------------------------------
     # Forward the webhook to Rasa webhook

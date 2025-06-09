@@ -26,8 +26,8 @@ NGROK_PORT = os.getenv("NGROK_PORT", 4040)
 NGROK_INTERNAL_WEBHOOK_HOST = os.getenv("NGROK_INTERNAL_WEBHOOK_HOST", "rasa-core")
 NGROK_INTERNAL_WEBHOOK_PORT = os.getenv("NGROK_INTERNAL_WEBHOOK_PORT", 5005)
 NGROK_API_URL = f"http://{NGROK_HOST}:{NGROK_PORT}"
-TELEGRAM_ACCESS_TOKEN = os.getenv("TELEGRAM_ACCESS_TOKEN", None)
-TELEGRAM_BOTNAME = os.getenv("TELEGRAM_BOTNAME", None)
+SLACK_ACCESS_TOKEN = os.getenv("SLACK_ACCESS_TOKEN", None)
+SLACK_BOTNAME = os.getenv("SLACK_BOTNAME", None)
 CREDENTIALS_PATH = os.getenv("CREDENTIALS_PATH", "/app/rasa/credentials.yml")
 
 # -------
@@ -44,7 +44,6 @@ logger.debug(
 # Wait for ngrok API to come online
 # ---------------------------------
 async def wait_for_ngrok_api():
-
     while True:
         try:
             async with httpx.AsyncClient() as client:
@@ -140,13 +139,13 @@ async def update_credentials_file(ngrok_url):
         with open(CREDENTIALS_PATH, "r") as file:
             credentials = yaml.safe_load(file)
 
-        credentials["custom_telegram.CustomTelegramInput"][
-            "webhook_url"
-        ] = f"{ngrok_url}/webhooks/telegram/webhook"
-        credentials["custom_telegram.CustomTelegramInput"][
-            "access_token"
-        ] = TELEGRAM_ACCESS_TOKEN
-        credentials["custom_telegram.CustomTelegramInput"]["verify"] = TELEGRAM_BOTNAME
+        credentials["custom_slack.CustomSlackInput"]["webhook_url"] = (
+            f"{ngrok_url}/webhooks/slack/webhook"
+        )
+        credentials["custom_slack.CustomSlackInput"]["access_token"] = (
+            SLACK_ACCESS_TOKEN
+        )
+        credentials["custom_slack.CustomSlackInput"]["verify"] = SLACK_BOTNAME
 
         with open(CREDENTIALS_PATH, "w") as file:
             yaml.safe_dump(credentials, file)
