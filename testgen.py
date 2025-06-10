@@ -46,10 +46,6 @@ personas = [
         role_description="A retired military officer looking to claim retirement and veteran benefits through public services.",
     ),
     Persona(
-        name="young parent",
-        role_description="A parent trying to apply for birth certificate and health insurance for their newborn.",
-    ),
-    Persona(
         name="tech-savvy helper",
         role_description="A tech-savvy person helping family members navigate complicated e-government services and digital platforms.",
     ),
@@ -84,7 +80,7 @@ async def language_adapt():
 
     dataset = generator.generate_with_langchain_docs(
         docs[:],
-        testset_size=500,
+        testset_size=20,
         transforms=transforms,
         query_distribution=distribution,
     )
