@@ -31,45 +31,74 @@ organizations = [
             {
                 'display_name': 'Birth registration',
                 'docs': [
-                    'project-birth_registration.md'
+                    'birth_registration/birth_registration.md',
+                    'birth_registration/birth_registration_instruction.md',
+                    'birth_registration/birth_registration_QA.md',
                 ]
             },
             {
                 'display_name': 'Death registration',
                 'docs': [
-                    'project-death_registration.md'
+                    'death_registration/death_registration.md',
+                    'death_registration/death_registration_instruction.md',
+                    'death_registration/death_registration_QA.md',
                 ]
             },
             {
                 'display_name': 'Marriage registration',
                 'docs': [
-                    'project-marriage_registration.md'
+                    'marriage_registration/marriage_registration.md',
+                    'marriage_registration/marriage_registration_instruction.md',
+                    'marriage_registration/marriage_registration_QA.md',
                 ]
             },
             {
                 'display_name': 'Domestic adoption registration',
                 'docs': [
-                    'project-domestic_adoption_registration.md'
+                    'domestic_registration/domestic_adoption_registration.md',
+                    'domestic_registration/domestic_adoption_registration_instruction.md',
+                    'domestic_registration/domestic_adoption_registration_QA.md',
                 ]  
             },
             {
                 'display_name': 'Guardianship registration',
                 'docs': [
-                    'project-guardianship_registration.md'
+                    'guardianship_registration/guardianship_registration.md',
+                    'guardianship_registration/guardianship_registration_instruction.md',
+                    'guardianship_registration/guardianship_registration_QA.md',
                 ]
             },
             {
                 'display_name': 'Permanent residence registration',
                 'docs': [
-                    'project-permanent_residence_registration.md'
+                    'permanent_residence_registration/permanent_residence_registration.md',
+                    'permanent_residence_registration/permanent_residence_registration_instruction.md',
+                    'permanent_residence_registration/permanent_residence_registration_QA.md',
+                ]
+            },
+            {
+                'display_name': 'ID card issuance',
+                'docs': [
+                    'id_card_issuance/id_card_issuance.md',
+                    'id_card_issuance/id_card_issuance_instruction.md',
+                    'id_card_issuance/id_card_issuance_QA.md',
+                ]
+            },
+            {
+                'display_name': 'ID card re-issuance',
+                'docs': [
+                    'id_card_re-issuance/id_card_re-issuance.md',
+                    'id_card_re-issuance/id_card_re-issuance_instruction.md',
+                    'id_card_re-issuance/id_card_re-issuance_QA.md',
                 ]
             },
             {
                 'display_name': 'Vietnamese national public service portal (portal)',
                 'docs': [
-                    'org-about_the_portal.md',
-                    'org-functions_of_the_portal.md',
-                    'org-usage_instructions.md'
+                    'public_services_portal/org-about_the_portal.md',
+                    'public_services_portal/org-functions_of_the_portal.md',
+                    'public_services_portal/org-usage_instructions.md',
+                    'public_services_portal/org-agency_finding_instruction.md',
                 ]
             }
         ]

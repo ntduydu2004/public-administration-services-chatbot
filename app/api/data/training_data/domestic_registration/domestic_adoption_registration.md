@@ -1,17 +1,6 @@
 # Đăng ký thủ tục nhận con nuôi trong nước
 
-Tiêu đề: Đăng ký thủ tục nhận con nuôi trong nước
-
-Mô tả: Hướng dẫn người dân thực hiện thủ tục đăng ký nhận con nuôi trong nước
-
-**Các bước thực hiện thủ tục đăng ký nhận con nuôi trong nước trên cổng dịch vụ công**
-
-Bước 1: Truy cập vào Cổng Dịch vụ công Quốc gia tại địa chỉ <www.dichvucong.gov.vn>.
-Bước 2: Từ trang chủ, chọn " Hôn nhân và gia đình" ở phần "Công dân", sau đó nhấn vào mục " Nhận con nuôi/ Đăng ký việc nhận con nuôi trong nước".
-Bước 3: Chọn thủ tục "Đăng ký thủ tục nhận con nuôi trong nước".
-Bước 4: Chọn cơ quan thực hiện thủ tục.
-Bước 5: Điền đầy đủ thông tin và nộp thủ tục. Sau đó, theo dõi tình trạng hồ sơ của bạn trên cổng dịch vụ công.
-
+Tiêu đề: Thông tin chi tiết thủ tục đăng ký việc nuôi con nuôi trong nước
 
 **Chi tiết thủ tục**
 
@@ -103,11 +92,3 @@ Trẻ em được nhận làm con nuôi phải có đủ các điều kiện sau
 + Là trẻ em dưới 16 tuổi. Nếu trẻ em thuộc trường hợp được cha dượng, mẹ kế, cô, cậu, dì, chú, bác ruột nhận làm con nuôi thì đến dưới 18 tuổi
 + Trẻ em bị bỏ rơi, trẻ em mồ côi cả cha và mẹ, trẻ em không nơi nương tựa
 + Một người chỉ được làm con của một người độc thân hoặc của cả hai người là vợ chồng.
-
-**Các câu hỏi thường gặp**
-
-1. Khi giao nhận con nuôi, những người nào phải có mặt tại lễ giao nhận?
-- Theo quy định tại Khoản 3 Điều 37 Luật nuôi con nuôi, tại lễ giao nhận con nuôi phải có mặt của đại diện Sở Tư pháp, trẻ em được nhận làm con nuôi, cha mẹ nuôi, đại diện cơ sở nuôi dưỡng đối với trẻ em được xin nhận làm con nuôi từ cơ sở nuôi dưỡng hoặc cha mẹ đẻ, người giám hộ của trẻ em đối với trẻ em được xin nhận làm con nuôi từ gia đình. Đối với trẻ em ở cơ sở nuôi dưỡng có cha mẹ đẻ được giải quyết cho làm con nuôi thì tại lễ giao nhận không bắt buộc cha mẹ đẻ phải có mặt.
-
-2. Đối tượng nào được nhận làm con nuôi?
-- Theo quy định tại Điều 8 của Luật Nuôi con nuôi, người được nhận làm con nuôi là trẻ em dưới 16 tuổi. Ngoài ra, người từ đủ 16 tuổi đến dưới 18 tuổi cũng được nhận làm con nuôi nếu được cha dượng hoặc mẹ kế nhận làm con nuôi hoặc được cô, cậu, dì, chú, bác ruột nhận làm con nuôi.
