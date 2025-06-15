@@ -1,7 +1,9 @@
+from io import BufferedReader
 from fastapi import HTTPException
-from graphviz import Digraph
 from uuid import UUID
 import os
+import unicodedata
+import re
 
 from typing import List, Optional, Union
 from config import FILE_UPLOAD_PATH, ENTITY_STATUS
@@ -651,12 +653,27 @@ def get_project_by_uuid(
 # ------------------
 
 
-def draw_diagram(steps: List[str], output_path: str):
-    graph = Digraph(comment="Diagram Of Process")
+def get_snake_case_name_from_vietnamese(name: str) -> str:
+    # Normalize the name to remove accents
+    normalized_name = unicodedata.normalize("NFD", name)
+    name_without_accents = "".join(
+        char for char in normalized_name if unicodedata.category(char) != "Mn"
+    )
 
-    for step, index in zip(steps, range(len(steps))):
-        graph.node(str(index), step)
-        if index > 0:
-            graph.edge(str(index - 1), str(index))
+    # Replace spaces and special characters with underscores
+    snake_case_name = re.sub(r"\W+", "_", name_without_accents)
 
-    graph.render(filename=output_path, format="png", cleanup=True)
+    # Convert to lowercase
+    return snake_case_name.lower()
+
+
+def get_images(images_list: List[str]):
+    dir = "./app/api/data/image_data/"
+    results: List[BufferedReader] = []
+    for image in images_list:
+        snake_case_image = get_snake_case_name_from_vietnamese(image)
+        image_dir = dir + snake_case_image + ".png"
+        file = open(image_dir, "rb")
+        results.append(file)
+
+    return results

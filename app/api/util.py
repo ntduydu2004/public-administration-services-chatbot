@@ -74,7 +74,7 @@ def sanitize_output(str_output: str):
     except json.JSONDecodeError:
         raise ValueError(f"LLM response is not valid JSON: {res}")
 
-    if "message" not in res or "tags" not in res or "is_escalate" not in res:
+    if "message" not in res or "is_escalate" not in res:
         raise ValueError(f"LLM response is missing required fields: {res}")
 
     logger.debug(f"Output: {res}")

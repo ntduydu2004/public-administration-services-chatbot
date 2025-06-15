@@ -10,13 +10,16 @@ from fastapi import HTTPException
 from uuid import UUID, uuid4
 from langchain.text_splitter import CharacterTextSplitter, MarkdownTextSplitter
 from sqlmodel import Session, text
-from util import sanitize_input, sanitize_output, add_steps_to_response
+from util import sanitize_input, sanitize_output
 from langchain import OpenAI
 from typing import List, Union, Optional, Dict, Tuple, Any
 from helpers import (
     get_user_by_uuid_or_identifier,
     get_chat_session_by_uuid,
 )
+
+from constants import COMPONENTS
+
 from models import (
     User,
     Organization,
@@ -61,6 +64,17 @@ vectorstore = PGVector(
     embedding_function=embedding,
 )
 
+procedures = [
+    "khai sinh",
+    "thường trú",
+    "kết hôn",
+    "khai tử",
+    "cấp lại cccd",
+    "cấp cccd",
+    "nhận con nuôi",
+    "giám hộ",
+]
+
 
 # -------------
 # Query the LLM
@@ -79,7 +93,6 @@ def chat_query(
     distance_threshold: Optional[float] = LLM_DISTANCE_THRESHOLD,
     node_limit: Optional[int] = LLM_MIN_NODE_LIMIT,
     model: Optional[LLM_MODELS] = LLM_MODELS.GPT_35_TURBO,
-    max_output_tokens: Optional[int] = LLM_MAX_OUTPUT_TOKENS,
 ) -> ChatSessionResponse:
     """
     Steps:
@@ -96,7 +109,6 @@ def chat_query(
         11. ✅ Store response in vector store
         12. Create ChatSession
             - Store embeddings
-            - Store tags
             - Store is_escalate
         13. Return response
     """
@@ -107,14 +119,13 @@ def chat_query(
     meta = {}
     agent_name = None
     embeddings = []
-    tags = []
     is_escalate = False
     response_message = None
     prompt = None
     context_str = None
     query_embeddings = None
     cached_answer = None
-    steps: List[str] = []
+    images_list: List[str] = []
     MODEL_TOKEN_LIMIT = (
         model.token_limit if isinstance(model, OpenAI) else LLM_MAX_OUTPUT_TOKENS
     )
@@ -203,7 +214,7 @@ def chat_query(
         logger.debug(f"💬 Cached answer: {cached_answer}")
 
     if cached_answer:
-        response_message, tags = cached_answer
+        response_message = cached_answer
     else:
         strategy = query_router(query_str)
         logger.debug(f"💬 Query strategy: {strategy}")
@@ -211,7 +222,6 @@ def chat_query(
         if strategy == "None":
             # return default response
             response_message = "Hãy hỏi tôi về hành chính công, tôi sẽ giúp bạn tìm kiếm thông tin cần thiết."
-            tags = ["undefined", "undefined"]
             is_escalate = True
         else:
             # ----------------
@@ -293,28 +303,23 @@ def chat_query(
                     retrieve_llm_response(
                         user_prompt,
                         model=model,
-                        max_output_tokens=max_output_tokens,
                         prefix_messages=system_prompt,
                     )
                 )
-                tags = llm_response.get("tags", [])
                 is_escalate = llm_response.get("is_escalate", False)
-                steps = llm_response.get("steps", [])
+                images_list = llm_response.get("images_list", [])
                 response_message = llm_response.get("message", None)
+
                 if ENABLE_CACHE_ANSWER:
                     store_answered_question(
                         question=query_str,
                         answer=response_message,
-                        tags=tags,
-                        steps=steps,
+                        images_list=images_list,
                     )
-                if len(steps) > 0:
-                    response_message = add_steps_to_response(steps, response_message)
                     logger.debug(f"LLM response: {str(response_message)}")
             else:
                 logger.info("🚫📝 No similar nodes found, returning default response")
                 response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
-                tags = ["undefined", "undefined"]
                 is_escalate = True
 
     chat_history[user.identifier].chat_memory.add_user_message(user_message)
@@ -328,13 +333,12 @@ def chat_query(
     # ---------------
     # Add to meta tag
     # ---------------
-    if tags:
-        meta["tags"] = tags
 
     meta["is_escalate"] = is_escalate
+    meta["images_list"] = images_list
 
-    if len(steps) > 0:
-        meta["steps"] = steps
+    if len(images_list) > 0:
+        meta[images_list] = images_list
 
     if session_id:
         meta["session_id"] = session_id
@@ -416,15 +420,9 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 - If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "Xin lỗi, tôi không thể hỗ trợ bạn trong lĩnh vực này.".
 - I will always respond in JSON format with the following keys: 
   + "message" my response to the user. 
-  + "tags" an array of short labels consisting a query type and a procedure type categorizing user input
   + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
-  + "steps", an array of steps of a process if the question is about instructing a process or a procedure. Otherwise, return an empty array. If there are multiple ways to do a process, I will not choose the one that uses search bar or any means of searching on the portal. Each step must be summarized to at most 10 words. For a phrase that cannot be replaced or changed like names, terminology..., it will be abbreviated.
+  + "images_list", represent the images that are included in the response, the names of them are only selected in the following list: "{COMPONENTS}"
 - I will only answer in Vietnamese
-
-[INSTRUCTIONS FOR TAGS]:
-- tags[0]: Response "Hỏi đáp" if the user is asking about requirements, documents, conditions, costs, etc.    
-           Response "Hướng dẫn" If the user is asking for steps, instructions, process, etc.
-- tags[1]: Choose from the following list if the procedure is clearly mentioned: [khai sinh, thường trú, kết hôn, khai tử, cấp căn cước, cấp lại căn cước]. If none match then response "khác"
 """,
         }
     ]
@@ -456,22 +454,17 @@ def get_cached_answer(query, distance_threshold=0.05) -> Optional[str]:
         # Lower score = more similar
         if score < distance_threshold:
             logger.debug(f"🔍 Found cached answer with score {score}")
-            return doc.metadata["answer"], doc.metadata["tags"]
+            return doc.metadata["answer"]
     return None
 
 
 # ------------------------
 # Store the answered question
 # ------------------------
-def store_answered_question(
-    question: str,
-    answer: str,
-    tags: Optional[List[str]] = None,
-    steps: Optional[List[str]] = None,
-):
+def store_answered_question(question: str, answer: str, images_list: list[str]):
     doc = Document(
         page_content=question,
-        metadata={"answer": answer, "tags": tags, "steps": steps},
+        metadata={"answer": answer, "images_list": images_list},
     )
     vectorstore.add_documents([doc])
 
@@ -630,16 +623,6 @@ def query_router(
     query_str: str,
 ):
     strategy = "None"
-    procedures = [
-        "khai sinh",
-        "thường trú",
-        "kết hôn",
-        "khai tử",
-        "cấp lại cccd",
-        "cấp cccd",
-        "cấp căn cước",
-        "cấp lại căn cước",
-    ]
 
     lower_query = query_str.lower()
 

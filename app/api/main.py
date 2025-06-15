@@ -18,7 +18,6 @@ from config import (
     ENTITY_STATUS,
     FILE_UPLOAD_PATH,
     RASA_WEBHOOK_URL,
-    TELEGRAM_ACCESS_TOKEN,
 )
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.openapi.utils import get_openapi
@@ -30,7 +29,7 @@ from helpers import (
     create_document_by_file_path,
     create_org_by_org_or_uuid,
     create_project_by_org,
-    draw_diagram,
+    get_images,
     get_document_by_uuid,
     get_documents_by_project_and_org,
     get_org_by_uuid_or_namespace,
@@ -186,7 +185,7 @@ def update_organization(
 ):
     org = get_org_by_uuid_or_namespace(organization_id, session=session)
 
-    org.update(organization.dict(exclude_unset=True))
+    org.update(organization.model_dump(exclude_unset=True))
     return org
 
 
@@ -405,7 +404,7 @@ def update_user(*, user_uuid: str, user: UserUpdate):
 
     # If user exists, update it
     if user:
-        user.update(**user.dict())
+        user.update(**user.model_dump())
         return user
 
     # If user doesn't exist, return 404
@@ -466,16 +465,12 @@ def process_webhook_telegram(webhook_data: dict):
 def get_webhook(
     *, session: Session = Depends(get_session), channel: str, webhook: WebhookCreate
 ):
-    webhook_data = webhook.dict()
-
+    webhook_data = webhook.model_dump()
     # --------------------
     # Get webhook metadata
     # --------------------
     if channel == "telegram":
         rasa_webhook_url = f"{RASA_WEBHOOK_URL}/webhooks/{channel}/webhook"
-        send_photo_url = (
-            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendPhoto"
-        )
         data = process_webhook_telegram(webhook_data)
         channel = CHANNEL_TYPE.TELEGRAM.value
         chat_id = data["chat_id"]
@@ -513,41 +508,23 @@ def get_webhook(
     )
 
     meta = chat_session.meta
-    steps: List[str] = meta.get("steps")
+    images_list: list[str] = meta.get("images_list")
 
     # -----------------------------------------
     # Lets add the LLM response to the metadata
     # -----------------------------------------
+
+    images_files = get_images(images_list)
+    files = {"photo": images_files}
     webhook_data["message"]["meta"] = {
         "response": chat_session.response if chat_session.response else None,
-        "tags": meta["tags"] if "tags" in meta else None,
         "is_escalate": meta["is_escalate"] if "is_escalate" in meta else False,
         "session_id": meta["session_id"] if "session_id" in meta else None,
     }
-
-    if steps and len(steps):
-        folder_path = os.getcwd()
-        output_path = os.path.join(folder_path, "images", "diagram")
-
-        # draw and save diagram in the following output path
-        draw_diagram(steps, output_path)
-
-        # Get the path to output file
-        output_file = output_path + ".png"
-
-        with open(output_file, "rb") as photo:
-            files = {"photo": photo}
-            data = {"chat_id": chat_id}
-            res = requests.post(send_photo_url, data=data, files=files)
-            logger.debug(
-                f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res.text}"
-            )
-    # -----------------------------------
-    # Forward the webhook to Rasa webhook
-    # -----------------------------------
-    res = requests.post(rasa_webhook_url, data=json.dumps(webhook_data))
+    data = {"chat_id": chat_id}
+    res = requests.post(rasa_webhook_url, data=json.dump(webhook_data), files=files)
     logger.debug(
-        f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nRasa webhook response: {res.text}"
+        f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res.text}"
     )
 
     return {"status": "ok"}
