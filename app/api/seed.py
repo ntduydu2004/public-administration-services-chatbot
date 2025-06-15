@@ -100,6 +100,23 @@ organizations = [
                     'public_services_portal/org-usage_instructions.md',
                     'public_services_portal/org-agency_finding_instruction.md',
                 ]
+            },
+            {
+                'display_name': 'Website structure',
+                'docs': [
+                    'public_services_portal/website_structure/co_con_nho_page.md',
+                    'public_services_portal/website_structure/cu_tru_va_gttt_page.md',
+                    'public_services_portal/website_structure/dien_luc_dat_dai_nha_o_page.md',
+                    'public_services_portal/website_structure/giai_quyet_khieu_kien_page.md',
+                    'public_services_portal/website_structure/hoc_tap_page.md',
+                    'public_services_portal/website_structure/home_page.md',
+                    'public_services_portal/website_structure/hon_nhan_va_gd_page.md',
+                    'public_services_portal/website_structure/huu_tri_page.md',
+                    'public_services_portal/website_structure/nguoi_than_qua_doi_page.md',
+                    'public_services_portal/website_structure/phuong_tien_va_nguoi_lai_page.md',
+                    'public_services_portal/website_structure/viec_lam_page.md',
+                    'public_services_portal/website_structure/y_te_page.md',
+                ]
             }
         ]
     }
