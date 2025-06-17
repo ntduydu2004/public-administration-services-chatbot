@@ -421,7 +421,7 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 - I will always respond in JSON format with the following keys: 
   + "message" my response to the user. 
   + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
-  + "images_list", represent the images that are included in the response, the names of them are only selected in the following list: "{COMPONENTS}"
+  + "images_list", represent the images that are included in the response, the names of them are only selected in the following list: "{COMPONENTS}". If the necessary image is not found in that list, don't do anything. If there is no images, return an empty array.
 - I will only answer in Vietnamese
 """,
         }
