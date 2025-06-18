@@ -35,6 +35,36 @@ organizations = [
                 ]
             },
             {
+                'display_name': 'Death registration',
+                'docs': [
+                    'project-death_registration.md'
+                ]
+            },
+            {
+                'display_name': 'Marriage registration',
+                'docs': [
+                    'project-marriage_registration.md'
+                ]
+            },
+            {
+                'display_name': 'Domestic adoption registration',
+                'docs': [
+                    'project-domestic_adoption_registration.md'
+                ]  
+            },
+            {
+                'display_name': 'Guardianship registration',
+                'docs': [
+                    'project-guardianship_registration.md'
+                ]
+            },
+            {
+                'display_name': 'Permanent residence registration',
+                'docs': [
+                    'project-permanent_residence_registration.md'
+                ]
+            },
+            {
                 'display_name': 'Vietnamese national public service portal (portal)',
                 'docs': [
                     'org-about_the_portal.md',
