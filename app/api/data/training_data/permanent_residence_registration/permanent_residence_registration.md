@@ -1,16 +1,6 @@
 # Đăng ký thường trú
 
-Tiêu đề: Đăng ký thường trú
-
-Mô tả: Hướng dẫn người dân thực hiện thủ tục đăng ký thường trú.
-
-**Các bước thực hiện thủ tục đăng ký thường trú trên cổng dịch vụ công**
-
-Bước 1: Truy cập vào Cổng Dịch vụ công Quốc gia tại địa chỉ dichvucong.gov.vn.
-Bước 2: Từ trang chủ, chọn "Cư trú và giấy tờ tùy thân" ở phần "Công dân", sau đó nhấn vào mục "Hộ khẩu".
-Bước 3: Chọn thủ tục "Đăng ký thường trú".
-Bước 4: Chọn cơ quan thực hiện thủ tục.
-Bước 5: Điền đầy đủ thông tin và nộp thủ tục. Sau đó, theo dõi tình trạng hồ sơ của bạn trên cổng dịch vụ công.
+Tiêu đề: Thông tin chi tiết về thủ tục đăng ký thường trú
 
 **Chi tiết thủ tục**
 
@@ -30,59 +20,48 @@ Bước 5: Điền đầy đủ thông tin và nộp thủ tục. Sau đó, theo
 Bước 1: Cá nhân chuẩn bị hồ sơ theo quy định của pháp luật.
 Bước 2: Cá nhân nộp hồ sơ đến Công an cấp xã.
 Bước 3: Khi tiếp nhận hồ sơ đăng ký thường trú, cơ quan đăng ký cư trú kiểm tra tính pháp lý và nội dung hồ sơ, thực hiện khai thác thông tin chứng minh về chỗ ở hợp pháp, quan hệ nhân thân do công dân cung cấp trong trong căn cước điện tử, tài khoản định danh điện tử trên hệ thống định danh và xác thực điện tử qua Ứng dụng định danh quốc gia hoặc trong Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu về cư trú, Kho quản lý dữ liệu điện tử tổ chức, cá nhân trên Cổng dịch vụ công quốc gia, Hệ thống thông tin giải quyết thủ tục hành chính cấp bộ, cấp tỉnh hoặc cơ sở dữ liệu quốc gia, cơ sở dữ liệu chuyên ngành khác. Trường hợp không khai thác được thông tin thì cơ quan đăng ký cư trú có trách nhiệm kiểm tra, xác minh để giải quyết thủ tục về cư trú. Công dân có trách nhiệm cung cấp bản sao, bản chụp, bản điện tử một trong các giấy tờ, tài liệu chứng minh về chỗ ở hợp pháp khi cơ quan đăng ký cư trú có yêu cầu.
-
 - Trường hợp hồ sơ đã đầy đủ, hợp lệ thì tiếp nhận hồ sơ và cấp Phiếu tiếp nhận hồ sơ và hẹn trả kết quả (Mẫu CT04 ban hành kèm theo Thông tư số 66/2023/TT- BCA) cho người đăng ký.
-- Chuyển hồ sơ đề nghị cấp văn bản đồng ý cho giải quyết thường trú đến cơ quan quản lý xuất, nhập cảnh Công an tỉnh, thành phố trực thuộc Trung ương nơi công dân đề nghị đăng ký thường trú (kèm hồ sơ đề nghị đăng ký thường trú) để kiểm tra, xác minh và đề nghị cơ quan quản lý xuất, nhập cảnh Bộ Công an xem xét cấp văn bản đồng ý cho giải quyết thường trú đối với trường hợp công dân Việt Nam định cư ở nước ngoài không có hộ chiếu Việt Nam còn giá trị sử dụng (nếu có).
-- Chuyển hồ sơ đề nghị xác nhận nơi thường xuyên đậu, đỗ và sử dụng phương tiện vào mục đích để ở hoặc hồ sơ đề nghị xác nhận tình trạng chỗ ở hợp pháp, diện tích nhà ở tối thiểu để đăng ký thường trú, đăng ký tạm trú đến Ủy ban nhân dân cấp xã để xem xét, giải quyết theo quy định (nếu có).
-
++ Chuyển hồ sơ đề nghị cấp văn bản đồng ý cho giải quyết thường trú đến cơ quan quản lý xuất, nhập cảnh Công an tỉnh, thành phố trực thuộc Trung ương nơi công dân đề nghị đăng ký thường trú (kèm hồ sơ đề nghị đăng ký thường trú) để kiểm tra, xác minh và đề nghị cơ quan quản lý xuất, nhập cảnh Bộ Công an xem xét cấp văn bản đồng ý cho giải quyết thường trú đối với trường hợp công dân Việt Nam định cư ở nước ngoài không có hộ chiếu Việt Nam còn giá trị sử dụng (nếu có).
++ Chuyển hồ sơ đề nghị xác nhận nơi thường xuyên đậu, đỗ và sử dụng phương tiện vào mục đích để ở hoặc hồ sơ đề nghị xác nhận tình trạng chỗ ở hợp pháp, diện tích nhà ở tối thiểu để đăng ký thường trú, đăng ký tạm trú đến Ủy ban nhân dân cấp xã để xem xét, giải quyết theo quy định (nếu có).
 - Trường hợp hồ sơ đủ điều kiện nhưng chưa đầy đủ thành phần hồ sơ theo quy định của pháp luật thì hướng dẫn bổ sung, hoàn thiện và cấp Phiếu hướng dẫn bổ sung, hoàn thiện hồ sơ (Mẫu CT05 ban hành kèm theo Thông tư số 66/2023/TT- BCA) cho người đăng ký.
 - Trường hợp hồ sơ không đủ điều kiện thì từ chối và cấp Phiếu từ chối tiếp nhận, giải quyết hồ sơ (Mẫu CT06 ban hành kèm theo Thông tư số 66/2023/TT- BCA) cho người đăng ký.
 Bước 4: Cá nhân nộp lệ phí đăng ký thường trú theo quy định.
 Bước 5: Căn cứ theo ngày hẹn trên Phiếu tiếp nhận hồ sơ và hẹn trả kết quả để nhận thông báo kết quả giải quyết thủ tục đăng ký cư trú (nếu có).
 
 8. Thành phần hồ sơ bao gồm:
-
-- Người sinh sống, người làm nghề lưu động trên phương tiện được đăng ký thường trú tại phương tiện, hồ sơ gồm:
-
+* Người sinh sống, người làm nghề lưu động trên phương tiện được đăng ký thường trú tại phương tiện, hồ sơ gồm:
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Trường hợp người Việt Nam định cư ở nước ngoài về Việt Nam nhập cảnh vào Việt Nam lần gần nhất bằng hộ chiếu do nước ngoài cấp hoặc giấy tờ thay thế hộ chiếu do nước ngoài cấp hoặc giấy tờ khác do cơ quan có thẩm quyền của Việt Nam cấp hoặc sử dụng hộ chiếu Việt Nam nhưng bị mất, hết hạn sử dụng thực hiện thủ tục đăng ký thường trú thì sử dụng Tờ khai thay đổi thông tin về cư trú (dùng cho người Việt Nam định cư ở nước ngoài) (mẫu CT02 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Đối với người đăng ký thường trú không phải là chủ phương tiện thì trong tờ khai phải ghi rõ ý kiến đồng ý cho đăng ký thường trú của chủ phương tiện hoặc người được ủy quyền, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
 - Giấy chứng nhận đăng ký phương tiện và giấy chứng nhận an toàn kỹ thuật và bảo vệ môi trường của phương tiện hoặc văn bản xác nhận của Ủy ban nhân dân cấp xã về việc sử dụng phương tiện đó vào mục đích để ở đối với phương tiện không thuộc đối tượng phải đăng ký, đăng kiểm.
 - Văn bản xác nhận của Ủy ban nhân dân cấp xã về địa điểm phương tiện đăng ký đậu, đỗ thường xuyên trong trường hợp phương tiện không phải đăng ký hoặc nơi đăng ký phương tiện không trùng với nơi thường xuyên đậu, đỗ.
-- Người được chăm sóc, nuôi dưỡng, trợ giúp được đăng ký thường trú tại cơ sở trợ giúp xã hội hoặc được đăng ký thường trú vào hộ gia đình nhận chăm sóc, nuôi dưỡng, trợ giúp, hồ sơ gồm:
-
+* Người được chăm sóc, nuôi dưỡng, trợ giúp được đăng ký thường trú tại cơ sở trợ giúp xã hội hoặc được đăng ký thường trú vào hộ gia đình nhận chăm sóc, nuôi dưỡng, trợ giúp, hồ sơ gồm:
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Trường hợp người Việt Nam định cư ở nước ngoài về Việt Nam sinh sống nhập cảnh vào Việt Nam lần gần nhất bằng hộ chiếu do nước ngoài cấp hoặc giấy tờ thay thế hộ chiếu do nước ngoài cấp hoặc giấy tờ khác do cơ quan có thẩm quyền của Việt Nam cấp hoặc sử dụng hộ chiếu Việt Nam nhưng bị mất, hết hạn sử dụng thực hiện thủ tục đăng ký thường trú thì sử dụng Tờ khai thay đổi thông tin về cư trú (dùng cho người Việt Nam định cư ở nước ngoài) (mẫu CT02 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Đối với người được cá nhân, hộ gia đình nhận chăm sóc, nuôi dưỡng thì trong tờ khai phải ghi rõ ý kiến đồng ý cho đăng ký thường trú của chủ hộ nhận chăm sóc, nuôi dưỡng, chủ sở hữu chỗ ở hợp pháp của cá nhân, hộ gia đình nhận chăm sóc, nuôi dưỡng hoặc người được ủy quyền, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
 Văn bản đề nghị của người đứng đầu cơ sở trợ giúp xã hội đối với người được cơ sở trợ giúp xã hội nhận chăm sóc, nuôi dưỡng, trợ giúp.
 - Giấy tờ, tài liệu xác nhận về việc chăm sóc, nuôi dưỡng, trợ giúp.
-- Trường hợp công dân đăng ký thường trú vào chỗ ở hợp pháp thuộc quyền sở hữu của mình:
-
+* Trường hợp công dân đăng ký thường trú vào chỗ ở hợp pháp thuộc quyền sở hữu của mình:
 - Tờ khai thay đổi thông tin cư trú (mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Trường hợp người Việt Nam định cư ở nước ngoài về Việt Nam sinh sống nhập cảnh vào Việt Nam lần gần nhất bằng hộ chiếu do nước ngoài cấp hoặc giấy tờ thay thế hộ chiếu do nước ngoài cấp hoặc giấy tờ khác do cơ quan có thẩm quyền của Việt Nam cấp hoặc sử dụng hộ chiếu Việt Nam nhưng bị mất, hết hạn sử dụng thực hiện thủ tục đăng ký thường trú thì sử dụng Tờ khai thay đổi thông tin về cư trú (dùng cho người Việt Nam định cư ở nước ngoài) (mẫu CT02 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Giấy tờ, tài liệu chứng minh việc sở hữu chỗ ở hợp pháp. Trừ trường hợp thông tin chứng minh về chỗ ở hợp pháp của công dân đã có trong cơ sở dữ liệu chuyên ngành đã được kết nối, chia sẻ với cơ quan đăng ký cư trú hoặc được công dân cung cấp nguồn dẫn hoặc đã có bản điện tử trên dịch vụ công qua giải quyết thủ tục hành chính khác thì cơ quan đăng ký cư trú tự kiểm tra, xác minh không yêu cầu công dân xuất trình giấy tờ chứng minh.
-- Đăng ký thường trú tại chỗ ở hợp pháp không thuộc quyền sở hữu của mình: - Những trường hợp khác được đăng ký thường trú vào chỗ ở hợp pháp do thuê, mượn, ở nhờ, hồ sơ gồm:
-
+* Đăng ký thường trú tại chỗ ở hợp pháp không thuộc quyền sở hữu của mình: - Những trường hợp khác được đăng ký thường trú vào chỗ ở hợp pháp do thuê, mượn, ở nhờ, hồ sơ gồm:
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA) trong đó ghi rõ ý kiến đồng ý cho đăng ký thường trú của chủ hộ, chủ sở hữu chỗ ở hợp pháp được cho thuê, cho mượn, cho ở nhờ hoặc người được ủy quyền, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
 - Trường hợp người Việt Nam định cư ở nước ngoài về Việt Nam sinh sống nhập cảnh vào Việt Nam lần gần nhất bằng hộ chiếu do nước ngoài cấp hoặc giấy tờ thay thế hộ chiếu do nước ngoài cấp hoặc giấy tờ khác do cơ quan có thẩm quyền của Việt Nam cấp hoặc sử dụng hộ chiếu Việt Nam nhưng bị mất, hết hạn sử dụng thực hiện thủ tục đăng ký thường trú thì sử dụng Tờ khai thay đổi thông tin về cư trú (dùng cho người Việt Nam định cư ở nước ngoài) (mẫu CT02 ban hành kèm theo Thông tư số 66/2023/TT-BCA), trong đó ghi rõ ý kiến đồng ý cho đăng ký thường trú của chủ hộ, chủ sở hữu chỗ ở hợp pháp được cho thuê, cho mượn, cho ở nhờ hoặc người được ủy quyền, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
-- Đăng ký thường trú tại chỗ ở hợp pháp không thuộc quyền sở hữu của mình: Công dân được đăng ký thường trú tại chỗ ở hợp pháp không thuộc quyền sở hữu của mình khi được chủ hộ và chủ sở hữu chỗ ở hợp pháp đó đồng ý trong các trường hợp sau đây: Vợ về ở với chồng; chồng về ở với vợ; con về ở với cha, mẹ hoặc cha, mẹ về ở với con; người cao tuổi về ở với anh ruột, chị ruột, em ruột, cháu ruột; người khuyết tật đặc biệt nặng, người khuyết tật nặng, người không có khả năng lao động, người bị bệnh tâm thần hoặc bệnh khác làm mất khả năng nhận thức, khả năng điều khiển hành vi về ở với ông nội, bà nội, ông ngoại, bà ngoại, anh ruột, chị ruột, em ruột, bác ruột, chú ruột, cậu ruột, cô ruột, dì ruột, cháu ruột, người giám hộ; người chưa thành niên được cha, mẹ hoặc người giám hộ đồng ý hoặc không còn cha, mẹ về ở với cụ nội, cụ ngoại, ông nội, bà nội, ông ngoại, bà ngoại, anh ruột, chị ruột, em ruột, bác ruột, chú ruột, cậu ruột, cô ruột, dì ruột; người chưa thành niên về ở với người giám hộ.
-
+* Đăng ký thường trú tại chỗ ở hợp pháp không thuộc quyền sở hữu của mình: Công dân được đăng ký thường trú tại chỗ ở hợp pháp không thuộc quyền sở hữu của mình khi được chủ hộ và chủ sở hữu chỗ ở hợp pháp đó đồng ý trong các trường hợp sau đây: Vợ về ở với chồng; chồng về ở với vợ; con về ở với cha, mẹ hoặc cha, mẹ về ở với con; người cao tuổi về ở với anh ruột, chị ruột, em ruột, cháu ruột; người khuyết tật đặc biệt nặng, người khuyết tật nặng, người không có khả năng lao động, người bị bệnh tâm thần hoặc bệnh khác làm mất khả năng nhận thức, khả năng điều khiển hành vi về ở với ông nội, bà nội, ông ngoại, bà ngoại, anh ruột, chị ruột, em ruột, bác ruột, chú ruột, cậu ruột, cô ruột, dì ruột, cháu ruột, người giám hộ; người chưa thành niên được cha, mẹ hoặc người giám hộ đồng ý hoặc không còn cha, mẹ về ở với cụ nội, cụ ngoại, ông nội, bà nội, ông ngoại, bà ngoại, anh ruột, chị ruột, em ruột, bác ruột, chú ruột, cậu ruột, cô ruột, dì ruột; người chưa thành niên về ở với người giám hộ.
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA), Trong đó ghi rõ ý kiến đồng ý cho đăng ký thường trú của chủ hộ, chủ sở hữu chỗ ở hợp pháp hoặc người được ủy quyền, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
 - Trường hợp người Việt Nam định cư ở nước ngoài về Việt Nam sinh sống nhập cảnh vào Việt Nam lần gần nhất bằng hộ chiếu do nước ngoài cấp hoặc giấy tờ thay thế hộ chiếu do nước ngoài cấp hoặc giấy tờ khác do cơ quan có thẩm quyền của Việt Nam cấp hoặc sử dụng hộ chiếu Việt Nam nhưng bị mất, hết hạn sử dụng thực hiện thủ tục đăng ký thường trú thì sử dụng Tờ khai thay đổi thông tin về cư trú (dùng cho người Việt Nam định cư ở nước ngoài) (mẫu CT02 ban hành kèm theo Thông tư số 66/2023/TT-BCA). Trong đó ghi rõ ý kiến đồng ý cho đăng ký thường trú của chủ hộ, chủ sở hữu chỗ ở hợp pháp hoặc người được ủy quyền, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
-- Đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ là nhà ở: Trường hợp trẻ em, người khuyết tật đặc biệt nặng, người khuyết tật nặng, người không nơi nương tựa được người đại diện hoặc ban quản lý cơ sở tín ngưỡng, người đứng đầu hoặc người đại diện cơ sở tôn giáo đồng ý cho đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ giúp là nhà ở, hồ sơ gồm:
-
+* Đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ là nhà ở: Trường hợp trẻ em, người khuyết tật đặc biệt nặng, người khuyết tật nặng, người không nơi nương tựa được người đại diện hoặc ban quản lý cơ sở tín ngưỡng, người đứng đầu hoặc người đại diện cơ sở tôn giáo đồng ý cho đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ giúp là nhà ở, hồ sơ gồm:
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA) trong đó ghi rõ ý kiến đồng ý cho đăng ký thường trú của người đại diện hoặc ban quản lý cơ sở tín ngưỡng, người đứng đầu hoặc người đại diện cơ sở tôn giáo, trừ trường hợp đã có ý kiến đồng ý bằng văn bản
 - Trường hợp người Việt Nam định cư ở nước ngoài về Việt Nam sinh sống nhập cảnh vào Việt Nam lần gần nhất bằng hộ chiếu do nước ngoài cấp hoặc giấy tờ thay thế hộ chiếu do nước ngoài cấp hoặc giấy tờ khác do cơ quan có thẩm quyền của Việt Nam cấp hoặc sử dụng hộ chiếu Việt Nam nhưng bị mất, hết hạn sử dụng thực hiện thủ tục đăng ký thường trú thì sử dụng Tờ khai thay đổi thông tin về cư trú (dùng cho người Việt Nam định cư ở nước ngoài) (mẫu CT02 ban hành kèm theo Thông tư số 66/2023/TT-BCA), trong đó ghi rõ ý kiến đồng ý cho đăng ký thường trú của người đại diện hoặc ban quản lý cơ sở tín ngưỡng, người đứng đầu hoặc người đại diện cơ sở tôn giáo, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
 - Văn bản xác nhận của Ủy ban nhân dân cấp xã về người thuộc đối tượng quy định tại khoản 2 Điều 17 của Luật Cư trú và việc trong cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ là nhà ở.
-- Đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ là nhà ở: Trường hợp người hoạt động tôn giáo được phong phẩm, bổ nhiệm, bầu cử, suy cử, phân công, thuyên chuyển đến hoạt động tôn giáo tại cơ sở tôn giáo; Người đại diện cơ sở tín ngưỡng; Người được người đại diện hoặc ban quản lý cơ sở tín ngưỡng đồng ý cho đăng ký thường trú để trực tiếp quản lý, tổ chức hoạt động tín ngưỡng tại cơ sở tín ngưỡng đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ giúp là nhà ở, hồ sơ gồm:
-
+* Đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ là nhà ở: Trường hợp người hoạt động tôn giáo được phong phẩm, bổ nhiệm, bầu cử, suy cử, phân công, thuyên chuyển đến hoạt động tôn giáo tại cơ sở tôn giáo; Người đại diện cơ sở tín ngưỡng; Người được người đại diện hoặc ban quản lý cơ sở tín ngưỡng đồng ý cho đăng ký thường trú để trực tiếp quản lý, tổ chức hoạt động tín ngưỡng tại cơ sở tín ngưỡng đăng ký thường trú tại cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ giúp là nhà ở, hồ sơ gồm:
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 Trường hợp người Việt Nam định cư ở nước ngoài về Việt Nam sinh sống nhập cảnh vào Việt Nam lần gần nhất bằng hộ chiếu do nước ngoài cấp hoặc giấy tờ thay thế hộ chiếu do nước ngoài cấp hoặc giấy tờ khác do cơ quan có thẩm quyền của Việt Nam cấp hoặc sử dụng hộ chiếu Việt Nam nhưng bị mất, hết hạn sử dụng thực hiện thủ tục đăng ký thường trú thì sử dụng Tờ khai thay đổi thông tin về cư trú (dùng cho người Việt Nam định cư ở nước ngoài) (mẫu CT02 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Đối với người được người đại diện hoặc ban quản lý cơ sở tín ngưỡng đồng ý cho đăng ký thường trú để trực tiếp quản lý, tổ chức hoạt động tín ngưỡng tại cơ sở tín ngưỡng thì trong tờ khai phải ghi rõ ý kiến đồng ý cho đăng ký thường trú của người đại diện hoặc ban quản lý cơ sở tín ngưỡng, trừ trường hợp đã có ý kiến đồng ý bằng văn bản.
 - Giấy tờ, tài liệu chứng minh là chức sắc, chức việc, nhà tu hành hoặc người khác hoạt động tôn giáo và được hoạt động tại cơ sở tôn giáo đó theo quy định của pháp luật về tín ngưỡng, tôn giáo đối với người hoạt động tôn giáo được bổ nhiệm, bầu cử, suy cử, phân công, thuyên chuyển đến hoạt động tôn giáo tại cơ sở tôn giáo; giấy tờ, tài liệu chứng minh là người đại diện cơ sở tín ngưỡng đối với người đại diện cơ sở tín ngưỡng.
 - Văn bản xác nhận của Ủy ban nhân dân cấp xã về việc trong cơ sở tín ngưỡng, cơ sở tôn giáo có công trình phụ trợ là nhà ở.
-- Đăng ký thường trú tại nơi đơn vị đóng quân trong Công an nhân dân, Quân đội nhân nhân nhân (đơn vị đóng quân, nhà ở công vụ)
-
+* Đăng ký thường trú tại nơi đơn vị đóng quân trong Công an nhân dân, Quân đội nhân nhân nhân (đơn vị đóng quân, nhà ở công vụ)
 - Tờ khai thay đổi thông tin cư trú (Mẫu CT01 ban hành kèm theo Thông tư số 66/2023/TT-BCA).
 - Đối với Công an nhân dân: Giấy giới thiệu của Thủ trưởng đơn vị quản lý trực tiếp ghi rõ nội dung để làm thủ tục đăng ký thường trú và đơn vị có chỗ ở cho cán bộ chiến sĩ (ký tên, đóng dấu).
 - Đối với Quân đội nhân dân: Giấy giới thiệu đăng ký thường trú của đơn vị cấp trung đoàn và tương đương trở lên.
@@ -94,4 +73,5 @@ Trường hợp người Việt Nam định cư ở nước ngoài về Việt N
 11. Cơ quan có thẩm quyền: Công an Xã
 
 12. Kết quả thực hiện: Cập nhật thông tin trong Cơ sở dữ liệu quốc gia về dân cư, Thông báo kết quả giải quyết thủ tục về cư trú, hủy bỏ thủ tục về cư trú, Cập nhật thông tin trong Cơ sở dữ liệu về cư trú, Phiếu từ chối tiếp nhận, giải quyết hồ sơ (lĩnh vực cư trú)
+
 13. Yêu cầu, điều kiện thực hiện: Người thực hiện thủ tục đã được thu thập, cập nhật thông tin công dân vào Cơ sở dữ liệu quốc gia về dân cư, Cơ sở dữ liệu về cư trú
