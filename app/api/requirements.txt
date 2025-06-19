@@ -10,4 +10,3 @@ tiktoken
 aiofiles
 sqlmodel==0.0.10
 openai==0.28.1
-graphviz[standard]

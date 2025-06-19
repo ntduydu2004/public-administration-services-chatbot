@@ -1,4 +1,3 @@
-from io import BufferedReader
 from fastapi import HTTPException
 from uuid import UUID
 import os
@@ -654,26 +653,36 @@ def get_project_by_uuid(
 
 
 def get_snake_case_name_from_vietnamese(name: str) -> str:
-    # Normalize the name to remove accents
-    normalized_name = unicodedata.normalize("NFD", name)
-    name_without_accents = "".join(
-        char for char in normalized_name if unicodedata.category(char) != "Mn"
-    )
+    # Normalize Unicode accents into their ASCII equivalent
+    name = name.replace("Đ", "D").replace("đ", "d")
+    name = unicodedata.normalize("NFD", name)
+    name = name.encode("ascii", "ignore").decode("utf-8")
 
-    # Replace spaces and special characters with underscores
-    snake_case_name = re.sub(r"\W+", "_", name_without_accents)
+    # Replace non-word characters (everything except numbers and letters) with underscores
+    name = re.sub(r"[^\w\s]", "", name)
+
+    # Replace whitespace (including tabs, newlines) with underscores
+    name = re.sub(r"\s+", "_", name)
 
     # Convert to lowercase
-    return snake_case_name.lower()
+    return name.lower()
 
 
 def get_images(images_list: List[str]):
-    dir = "./app/api/data/image_data/"
-    results: List[BufferedReader] = []
+    dir = get_images_dir()
+    files = dict()
+    media = []
     for image in images_list:
         snake_case_image = get_snake_case_name_from_vietnamese(image)
-        image_dir = dir + snake_case_image + ".png"
+        image_dir = os.path.join(dir, snake_case_image) + ".png"
         file = open(image_dir, "rb")
-        results.append(file)
+        files[snake_case_image] = file
+        media.append({"type": "photo", "media": ("attach://" + snake_case_image)})
 
-    return results
+    return files, media
+
+
+def get_images_dir():
+    folder_path = os.getcwd()
+    output_path = os.path.join(folder_path, "data", "image_data")
+    return output_path

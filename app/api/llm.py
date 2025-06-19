@@ -71,8 +71,15 @@ procedures = [
     "khai tử",
     "cấp lại cccd",
     "cấp cccd",
-    "nhận con nuôi",
+    "cấp căn cước",
+    "cấp lại căn cước",
     "giám hộ",
+    "nhận con nuôi",
+    "đăng ký",
+    "thủ tục",
+    "hướng dẫn",
+    "cơ quan",
+    "cổng dịch vụ công",
 ]
 
 
@@ -336,9 +343,6 @@ def chat_query(
 
     meta["is_escalate"] = is_escalate
     meta["images_list"] = images_list
-
-    if len(images_list) > 0:
-        meta[images_list] = images_list
 
     if session_id:
         meta["session_id"] = session_id
@@ -623,23 +627,6 @@ def query_router(
     query_str: str,
 ):
     strategy = "None"
-    procedures = [
-        "khai sinh",
-        "thường trú",
-        "kết hôn",
-        "khai tử",
-        "cấp lại cccd",
-        "cấp cccd",
-        "cấp căn cước",
-        "cấp lại căn cước",
-        "giám hộ",
-        "nhận con nuôi",
-        "đăng ký",
-        "thủ tục",
-        "hướng dẫn",
-        "cơ quan",
-        "cổng dịch vụ công"
-    ]
 
     lower_query = query_str.lower()
 
