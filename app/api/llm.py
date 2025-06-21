@@ -57,6 +57,8 @@ chat_history_summary: Dict[str, str] = {}
 embedding = OpenAIEmbeddings(openai_api_key=API_KEY)
 
 # Create the vector store (table will be auto-created)
+get_engine(dsn=SU_DSN)
+
 collection_name = "answered_questions"
 vectorstore = PGVector(
     collection_name=collection_name,
@@ -425,7 +427,7 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 - I will always respond in JSON format with the following keys: 
   + "message" my response to the user. 
   + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
-  + "images_list", represent the images that are included in the response, the names of them are only selected in the following list: "{COMPONENTS}". If the necessary image is not found in that list, don't do anything. If there is no images, return an empty array.
+  + "images_list" a list of image URLs or file paths provided in [DOCUMENT] relevant to user question. These URLs/file paths will be excluded from the context of "message" part.
 - I will only answer in Vietnamese
 """,
         }
