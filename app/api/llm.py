@@ -133,7 +133,7 @@ def chat_query(
     prompt = None
     context_str = None
     query_embeddings = None
-    cached_answer = None
+    cached_metadata = None
     images_list: List[str] = []
     MODEL_TOKEN_LIMIT = (
         model.token_limit if isinstance(model, OpenAI) else LLM_MAX_OUTPUT_TOKENS
@@ -219,11 +219,12 @@ def chat_query(
     # Check for cached answer
     # ----------------
     if ENABLE_CACHE_ANSWER:
-        cached_answer = get_cached_answer(query_str)
-        logger.debug(f"💬 Cached answer: {cached_answer}")
+        cached_metadata = get_cached_answer(query_str)
+        logger.debug(f"💬 Cached answer: {cached_metadata}")
 
-    if cached_answer:
-        response_message = cached_answer
+    if cached_metadata:
+        response_message = cached_metadata["answer"]
+        images_list = cached_metadata["images_list"]
     else:
         strategy = query_router(query_str)
         logger.debug(f"💬 Query strategy: {strategy}")
@@ -460,7 +461,7 @@ def get_cached_answer(query, distance_threshold=0.05) -> Optional[str]:
         # Lower score = more similar
         if score < distance_threshold:
             logger.debug(f"🔍 Found cached answer with score {score}")
-            return doc.metadata["answer"]
+            return doc.metadata
     return None
 
 
