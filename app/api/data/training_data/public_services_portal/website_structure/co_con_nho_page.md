@@ -15,3 +15,5 @@ Thủ tục đăng ký khai sinh có yếu tố nước ngoài tại khu vực b
 4. Liên thông khai sinh, bảo hiểm, cư trú:
 Liên thông thủ tục đăng ký khai sinh, đăng ký thường trú, cấp thẻ bảo hiểm y tế cho trẻ em dưới 6 tuổi.
 Liên thông thủ tục đăng ký khai sinh và cấp thẻ bảo hiểm y tế cho trẻ em dưới 6 tuổi.
+
+(Ảnh minh họa: overview_web_co_con_nho)

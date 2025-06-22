@@ -14,3 +14,5 @@ Trang chính của Cổng Dịch vụ Công Quốc gia Việt Nam có đường 
 - Cơ quan chủ quản: Văn phòng Chính phủ.
 - Tổng đài hỗ trợ: 18001096.
 - Email liên hệ: dichvucong@chinhphu.vn.
+
+(Ảnh minh họa: overview_trang_chu_web_dich_vu_cong)

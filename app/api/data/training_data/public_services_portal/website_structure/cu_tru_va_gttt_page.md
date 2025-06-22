@@ -33,3 +33,5 @@ Gia hạn tạm trú
 Xóa đăng ký tạm trú
 6. Hộ khẩu
 Đăng ký thường trú
+
+(Ảnh minh họa: overview_web_cu_tru_va_giay_to_tuy_than)

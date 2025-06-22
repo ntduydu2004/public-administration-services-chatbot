@@ -27,3 +27,5 @@ Thủ tục đăng ký chấm dứt giám hộ có yếu tố nước ngoài
 Thủ tục đăng ký kết hôn
 Thủ tục đăng ký kết hôn có yếu tố nước ngoài
 Thủ tục đăng ký kết hôn có yếu tố nước ngoài tại khu vực biên giới
+
+(Ảnh minh họa: overview_web_hon_nhan_va_gia_dinh)

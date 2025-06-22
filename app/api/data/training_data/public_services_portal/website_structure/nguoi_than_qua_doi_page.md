@@ -12,3 +12,5 @@ Thủ tục đăng ký khai tử lưu động
 Thủ tục đăng ký khai tử có yếu tố nước ngoài
 Thủ tục đăng ký khai tử có yếu tố nước ngoài tại khu vực biên giới
 Thủ tục đăng ký lại khai tử có yếu tố nước ngoài
+
+(Ảnh minh họa: overview_web_nguoi_than_qua_doi)
