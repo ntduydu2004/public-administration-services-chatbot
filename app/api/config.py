@@ -72,7 +72,7 @@ DB_PORT = os.getenv("DB_PORT", 5432)
 DB_USER = os.getenv("DB_USER")
 DB_NAME = os.getenv("DB_NAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
-ENABLE_CACHE_ANSWER = os.getenv("ENABLE_CACHE_ANSWER", "False").lower() == "True"
+ENABLE_CACHE_ANSWER = os.getenv("ENABLE_CACHE_ANSWER", "False").lower() == "true"
 TELEGRAM_ACCESS_TOKEN = os.getenv("TELEGRAM_ACCESS_TOKEN")
 API_KEY = os.getenv("OPENAI_API_KEY")
 DSN = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
