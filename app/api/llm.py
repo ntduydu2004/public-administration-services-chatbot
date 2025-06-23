@@ -451,7 +451,7 @@ def get_token_count(text: str):
 # ------------------------
 # Get the cached answer
 # ------------------------
-def get_cached_answer(query, distance_threshold=0.05) -> Optional[str]:
+def get_cached_answer(query, distance_threshold=0.025) -> Optional[str]:
     """
     Check if the query is already in the vector store and return the cached answer if found.
     """
