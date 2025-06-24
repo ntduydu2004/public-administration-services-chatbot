@@ -102,7 +102,7 @@ organizations = [
                 ]
             },
             {
-                'display_name': 'Website structure',
+                'display_name': 'Vietnamese national public service portal website structure',
                 'docs': [
                     'public_services_portal/website_structure/co_con_nho_page.md',
                     'public_services_portal/website_structure/cu_tru_va_gttt_page.md',
@@ -117,7 +117,21 @@ organizations = [
                     'public_services_portal/website_structure/viec_lam_page.md',
                     'public_services_portal/website_structure/y_te_page.md',
                 ]
-            }
+            },
+            {
+                'display_name': 'Ministry of Public Security public service portal',
+                'docs': [
+                    'public_security_public_service_portal/about_the_portal.md',
+                ]
+            },
+            {
+                'display_name': 'Ministry of Public Security public service portal website structure',
+                'docs': [
+                    'public_security_public_service_portal/website_structure/home_page.md',
+                    'public_security_public_service_portal/website_structure/can_cuoc_page.md',
+                    'public_security_public_service_portal/website_structure/cu_tru_page.md',
+                ]
+            },
         ]
     }
 ]

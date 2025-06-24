@@ -1,0 +1,3 @@
+Tiêu đề: Giới thiệu về Cổng Dịch vụ Công Bộ Công an
+
+Cổng Dịch vụ Công Bộ Công an Việt Nam có đường dẫn là dichvucong.dancuquocgia.gov.vn, là nền tảng trực tuyến cung cấp các dịch vụ công liên quan đến lĩnh vực quản lý cư trú và lĩnh vực quản lý Căn Cước, giúp người dân và doanh nghiệp thực hiện các thủ tục hành chính một cách nhanh chóng và thuận tiện. Cổng này được thiết kế để hỗ trợ người dùng trong việc tra cứu thông tin, nộp hồ sơ trực tuyến, quản lý hồ sơ dịch vụ công, phản ánh kiến nghị và nhận hỗ trợ từ cơ quan chức năng.
