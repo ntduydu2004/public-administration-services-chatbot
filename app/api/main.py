@@ -17,8 +17,10 @@ from config import (
     CHANNEL_TYPE,
     ENTITY_STATUS,
     FILE_UPLOAD_PATH,
+    OUTPUT_HIGHLIGHT_PICTURE,
     RASA_WEBHOOK_URL,
     TELEGRAM_ACCESS_TOKEN,
+    USER_INPUT_PICTURE,
 )
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.openapi.utils import get_openapi
@@ -440,12 +442,32 @@ def process_webhook_telegram(webhook_data: dict):
             },
             "date": 1683115867,
             "text": "Tell me about the company?"
+            "photo": [
+                {
+                    "file_id": "photo_file_id",
+                    "file_unique_id": "unique_id",
+                    "file_size": 12345,
+                    "width": 800,
+                    "height": 600
+                }
+            ]
         }
     }
     """
     message = webhook_data.get("message", None)
+    logger.debug(f"user_message: {message}")
     chat = message.get("chat", None)
     message_from = message.get("from", None)
+    photo = message.get("photo", None)
+
+    user_message = message.get("text", None)
+    if user_message is None:
+        user_message = message.get("caption", None)
+
+    if photo:
+        file_id = photo[-1]["file_id"]
+        process_image_input(file_id)
+
     return {
         "update_id": webhook_data.get("update_id", None),
         "message_id": message.get("message_id", None),
@@ -454,12 +476,30 @@ def process_webhook_telegram(webhook_data: dict):
         "user_language": message_from.get("language_code", None),
         "user_firstname": chat.get("first_name", None),
         "chat_id": chat.get("id", None),
-        "user_message": message.get("text", None),
+        "user_message": user_message,
         "message_ts": datetime.fromtimestamp(message.get("date", None))
         if message.get("date", None)
         else None,
         "message_type": chat.get("type", None),
     }
+
+
+def process_image_input(file_id: str):
+    file_info_url = (
+        f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/getFile?file_id={file_id}"
+    )
+    file_info = requests.get(file_info_url).json()
+    file_path = file_info["result"]["file_path"]
+
+    # Download the file
+    file_url = f"https://api.telegram.org/file/bot{TELEGRAM_ACCESS_TOKEN}/{file_path}"
+    response = requests.get(file_url)
+    if response.status_code == 200:
+        output_dir = "./data/image"
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = USER_INPUT_PICTURE
+        with open(output_path, "wb") as f:
+            f.write(response.content)
 
 
 @app.post("/webhooks/{channel}/webhook")
@@ -472,9 +512,6 @@ def get_webhook(
     # --------------------
     if channel == "telegram":
         rasa_webhook_url = f"{RASA_WEBHOOK_URL}/webhooks/{channel}/webhook"
-        send_photo_url = (
-            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendMediaGroup"
-        )
         data = process_webhook_telegram(webhook_data)
         channel = CHANNEL_TYPE.TELEGRAM.value
         chat_id = data["chat_id"]
@@ -502,6 +539,7 @@ def get_webhook(
         logger.warning("⚠️ Empty query_str from Telegram message. Skipping.")
         return {"status": "ok", "message": "Empty input ignored."}
 
+    logger.debug("before chat query")
     chat_session = chat_query(
         user_message,
         session=session,
@@ -513,12 +551,13 @@ def get_webhook(
 
     meta = chat_session.meta
     images_list: list[str] = meta.get("images_list")
+    is_highlight: bool = meta.get("is_highlight")
+    logger.debug(f"after chat query, meta:{meta}")
 
     # -----------------------------------------
     # Lets add the LLM response to the metadata
     # -----------------------------------------
 
-    files, media = get_images(images_list)
     webhook_data["message"]["meta"] = {
         "response": chat_session.response if chat_session.response else None,
         "is_escalate": meta["is_escalate"] if "is_escalate" in meta else False,
@@ -533,14 +572,36 @@ def get_webhook(
         f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res.text}"
     )
 
-    res2 = requests.post(
-        send_photo_url,
-        data={"chat_id": chat_id, "media": json.dumps(media)},
-        files=files,
-    )
-    logger.debug(
-        f"[🤖 RasaGPT API webhook]\nPosting data: {media}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res2.text}"
-    )
+    if is_highlight:
+        output_dir = OUTPUT_HIGHLIGHT_PICTURE
+        send_photo_url = (
+            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendPhoto"
+        )
+        photo = open(output_dir, "rb")
+        files = {"photo": photo}
+        res2 = requests.post(
+            send_photo_url,
+            data={"chat_id": chat_id},
+            files=files,
+        )
+        logger.debug(
+            f"[🤖 RasaGPT API webhook]\nPosting picture\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res2.text}"
+        )
+
+    else:
+        send_photo_url = (
+            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendMediaGroup"
+        )
+        files, media = get_images(images_list)
+
+        res2 = requests.post(
+            send_photo_url,
+            data={"chat_id": chat_id, "media": json.dumps(media)},
+            files=files,
+        )
+        logger.debug(
+            f"[🤖 RasaGPT API webhook]\nPosting data: {media}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res2.text}"
+        )
 
     return {"status": "ok"}
 

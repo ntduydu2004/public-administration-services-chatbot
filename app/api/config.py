@@ -63,6 +63,10 @@ APP_ICON = "/public/img/rasagpt-icon-200x200.png"
 APP_LOGO = "/public/img/rasagpt-logo-1.png"
 
 FILE_UPLOAD_PATH = os.getenv("FILE_UPLOAD_PATH", "/tmp")
+USER_INPUT_PICTURE = os.getenv("USER_INPUT_PICTURE", "user_input_picture.png")
+OUTPUT_HIGHLIGHT_PICTURE = os.getenv(
+    "OUTPUT_HIGHLIGHT_PICTURE", "output_highlight_picture.png"
+)
 
 # Database configurations
 POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
