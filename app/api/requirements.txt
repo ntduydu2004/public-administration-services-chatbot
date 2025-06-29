@@ -10,3 +10,5 @@ tiktoken
 aiofiles
 sqlmodel==0.0.10
 openai==0.28.1
+opencv-python
+huggingface_hub>=0.14.0

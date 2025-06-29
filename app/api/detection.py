@@ -1,9 +1,8 @@
 import cv2
+from config import OUTPUT_HIGHLIGHT_PICTURE, USER_INPUT_PICTURE
 from doclayout_yolo import YOLOv10
 
-from config import OUTPUT_HIGHLIGHT_PICTURE, USER_INPUT_PICTURE
-
-model = YOLOv10("/models/ui-model/doclayout_yolo_docstructbench_imgsz1024.pt")
+model = YOLOv10("./models/ui-model/doclayout_yolo_docstructbench_imgsz1024.pt")
 
 
 def highlight_input_boxes():
