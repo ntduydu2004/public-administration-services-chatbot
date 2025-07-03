@@ -68,6 +68,8 @@ OUTPUT_HIGHLIGHT_PICTURE = os.getenv(
     "OUTPUT_HIGHLIGHT_PICTURE", "output_highlight_picture.png"
 )
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
+
 # Database configurations
 POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "postgres")

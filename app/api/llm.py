@@ -10,7 +10,7 @@ from fastapi import HTTPException
 from uuid import UUID, uuid4
 from langchain.text_splitter import CharacterTextSplitter, MarkdownTextSplitter
 from sqlmodel import Session, text
-from detection import highlight_input_boxes
+from ocr import highlight_query
 from util import sanitize_input, sanitize_output
 from langchain import OpenAI
 from typing import List, Union, Optional, Dict, Tuple, Any
@@ -83,6 +83,7 @@ procedures = [
     "hướng dẫn",
     "cơ quan",
     "cổng dịch vụ công",
+    "điền"
 ]
 
 
@@ -321,15 +322,15 @@ def chat_query(
                 is_escalate = llm_response.get("is_escalate", False)
                 images_list = llm_response.get("images_list", [])
                 response_message = llm_response.get("message", None)
-                is_highlight = True
+                is_highlight = llm_response.get("message", None)
 
-                if ENABLE_CACHE_ANSWER:
+                if ENABLE_CACHE_ANSWER and not is_highlight:
                     store_answered_question(
                         question=query_str,
                         answer=response_message,
                         images_list=images_list,
                     )
-                    logger.debug(f"LLM response: {str(response_message)}")
+                logger.debug(f"LLM response: {str(response_message)}")
             else:
                 logger.info("🚫📝 No similar nodes found, returning default response")
                 response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
@@ -339,7 +340,7 @@ def chat_query(
     chat_history[user.identifier].chat_memory.add_ai_message(response_message)
 
     if is_highlight:
-        highlight_input_boxes()
+        highlight_query(query=query_str, model=model)
 
     # -----------------------------------
     # Calculate input and response tokens
@@ -433,10 +434,10 @@ I will answer the user's questions using only the [DOCUMENT] provided. I will ab
 - I never lie or invent answers not explicitly provided in [DOCUMENT]
 - If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "Xin lỗi, tôi không thể hỗ trợ bạn trong lĩnh vực này.".
 - I will always respond in JSON format with the following keys:
-  + "message" my full, clear, concise answer in Vietnamese based only on the [DOCUMENT]; it must not contain image links/paths. If the question is to highlight certain areas, just reply: " Đây là các vị trí được khoanh vùng: "
+  + "message" my full, clear, concise answer in Vietnamese based only on the [DOCUMENT]; it must not contain image links/paths. If the question is to highlight or guide instructions at certain areas in an image, jjust give a simple reply like: "Đây là các vị trí cần điền thông tin: "
   + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
   + "images_list" a list of image URLs or file paths from the [DOCUMENT] that are relevant to the users question; they serve as visual aids but never as replacements for "message".
-  + "is_highlight" a boolean, returning true if the question is to highlight certain areas in a given picture
+  + "is_highlight" a boolean, returning true if the question is to highlight or to guide instructions at certain areas in a given picture.
 - I will only answer in Vietnamese
 """,
         }
