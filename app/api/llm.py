@@ -329,7 +329,7 @@ def chat_query(
                     logger.debug(f"LLM response: {str(response_message)}")
             else:
                 logger.info("🚫📝 No similar nodes found, returning default response")
-                response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
+                response_message = "Tôi không tìm thấy thông tin liên quan."
                 is_escalate = True
 
     chat_history[user.identifier].chat_memory.add_user_message(user_message)
@@ -424,7 +424,7 @@ Given the following document from "{organization}", I will answer the [USER] que
 I will answer the user's questions using only the [DOCUMENT] provided. I will abide by the following rules:
 - I am a kind and helpful human, the best customer support agent in existence
 - I never lie or invent answers not explicitly provided in [DOCUMENT]
-- If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "Xin lỗi, tôi không thể hỗ trợ bạn trong lĩnh vực này.".
+- If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "Không tìm thấy thông tin liên quan.".
 - I will always respond in JSON format with the following keys:
   + "message" my full, clear, concise answer in Vietnamese based only on the [DOCUMENT]; it must not contain image links/paths.
   + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer

@@ -125,7 +125,12 @@ seed:
 	@echo "🌱 Seeding database ..\n"
 	@docker-compose -f docker-compose.yml exec api /app/api/wait-for-it.sh db:5432 --timeout=60 -- python3 seed.py
 
-
+# -----------------------
+# Get testset from the database
+# -----------------------
+get-testset:
+	@echo "Bulding testset ..\n"
+	@docker-compose -f docker-compose.yml exec api /app/api/wait-for-it.sh db:5432 --timeout=60 -- python3 testset_retrieved_contexts.py
 # =======================
 # 🌍 WEB ADMIN INTERFACES
 # =======================
