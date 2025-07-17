@@ -12,7 +12,7 @@ def get_chat_prompt_template() -> ChatPromptTemplate:
     Creates a LangChain ChatPromptTemplate with system and user messages.
     """
     system_message = """
-I am Alice, a very kind and enthusiastic customer support agent who loves to help customers. I will answer the [USER] questions using only the [DOCUMENT].
+I am a very kind and enthusiastic customer support agent. I will answer the [USER] questions using only the [DOCUMENT]. My answer will be concise and directly related to the question.
 
 [DOCUMENT]:
 {context_str}
@@ -85,7 +85,7 @@ def get_local_llm_response(user_query: str, context_str: str) -> dict:
             "user_query": user_query,
             "context_str": context_str,
         })
-        return response
+        return response.content
 
     except Exception as e:
         print(f"An error occurred!")
@@ -93,7 +93,6 @@ def get_local_llm_response(user_query: str, context_str: str) -> dict:
         
 def get_testset_response(testset_path: str, output_path: str) -> pd.DataFrame:
     dataFrame = pd.read_csv(testset_path)
-    dataFrame = dataFrame.head(5)
     
     responses = []
     
@@ -102,7 +101,7 @@ def get_testset_response(testset_path: str, output_path: str) -> pd.DataFrame:
         user_query = row['user_input']
         context_str = row['retrieved_contexts']
         
-        response = get_local_llm_response(user_query, context_str)
+        response = get_llm_response(user_query, context_str)
         
         responses.append(response)
     
@@ -146,4 +145,4 @@ if not env:
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 
-get_testset_response('retrieved_contexts.csv', 'qwen_testset_response.csv')
+get_testset_response('retrieved_contexts.csv', 'gpt_testset_response.csv')
