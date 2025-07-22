@@ -1,9 +1,8 @@
-.PHONY: default banner help install build run stop restart rasa-restart rasa-stop rasa-start rasa-build seed logs ngrok pgadmin api api-stop db db-stop db-purge purge models shell-api shell-db shell-rasa shell-actions rasa-train rasa-start rasa-stop env-var
+.PHONY: default help install build run stop restart rasa-restart rasa-stop rasa-start rasa-build seed logs ngrok pgadmin api api-stop db db-stop db-purge purge models shell-api shell-db shell-rasa shell-actions rasa-train rasa-start rasa-stop env-var
 
 defaut: help
 
 help:
-	@make banner
 	@echo "+------------------+"
 	@echo "| 🏠 CORE COMMANDS |"
 	@echo "+------------------+"
@@ -32,16 +31,6 @@ help:
 	@echo "make shell-actions - Open shell in Rasa actions container\n"
 
 
-banner:
-	@echo "\n\n-------------------------------------"
-	@echo "▒█▀▀█ █▀▀█ █▀▀ █▀▀█ ▒█▀▀█ ▒█▀▀█ ▀▀█▀▀"
-	@echo "▒█▄▄▀ █▄▄█ ▀▀█ █▄▄█ ▒█░▄▄ ▒█▄▄█ ░▒█░░"
-	@echo "▒█░▒█ ▀░░▀ ▀▀▀ ▀░░▀ ▒█▄▄█ ▒█░░░ ░▒█░░"
-	@echo "+-----------------------------------+"
-	@echo "| http://RasaGPT.dev by @paulpierre |"
-	@echo "+-----------------------------------+\n\n"
-
-
 
 # ==========================
 # 👷 INITIALIZATION COMMANDS
@@ -51,7 +40,6 @@ banner:
 # Run this first to setup the environment
 # ---------------------------------------
 install:
-	@make banner
 	@make stop
 	@make env-var
 	@make rasa-train

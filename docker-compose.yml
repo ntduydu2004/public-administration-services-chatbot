@@ -1,18 +1,9 @@
-# -------------------------------------
-# ▒█▀▀█ █▀▀█ █▀▀ █▀▀█ ▒█▀▀█ ▒█▀▀█ ▀▀█▀▀ 
-# ▒█▄▄▀ █▄▄█ ▀▀█ █▄▄█ ▒█░▄▄ ▒█▄▄█ ░▒█░░ 
-# ▒█░▒█ ▀░░▀ ▀▀▀ ▀░░▀ ▒█▄▄█ ▒█░░░ ░▒█░░
-# +-----------------------------------+
-# | http://RasaGPT.dev by @paulpierre |
-# +-----------------------------------+
-
-version: '3.9'
+version: "3.9"
 
 services:
-
-# -------------------
-# API service for LLM
-# -------------------
+  # -------------------
+  # API service for LLM
+  # -------------------
   api:
     build:
       context: ./app/api
@@ -34,10 +25,9 @@ services:
       - ./app/scripts/wait-for-it.sh:/app/api/wait-for-it.sh
       - ./app/api:/app/api
 
-
-# -------------------
-# Ngrok agent service
-# -------------------
+  # -------------------
+  # Ngrok agent service
+  # -------------------
   ngrok:
     image: ngrok/ngrok:latest
     container_name: chat_ngrok
@@ -56,10 +46,9 @@ services:
       - ./app/rasa/ngrok.yml:/etc/ngrok.yml
     restart: unless-stopped
 
-
-# -----------------
-# Core Rasa service
-# -----------------
+  # -----------------
+  # Core Rasa service
+  # -----------------
   rasa-core:
     image: rasa/rasa:latest
     container_name: chat_rasa_core
@@ -72,17 +61,21 @@ services:
 
     ports:
       - 5005:5005
-    entrypoint: ["/bin/bash", "-c", "chmod +x /app/wait-for-it.sh && /app/wait-for-it.sh rasa-credentials:8889 -t 120 -o && rasa run --enable-api --cors '*' --debug --credentials /app/credentials.yml --endpoints /app/endpoints.yml --model /app/models"] 
+    entrypoint:
+      [
+        "/bin/bash",
+        "-c",
+        "chmod +x /app/wait-for-it.sh && /app/wait-for-it.sh rasa-credentials:8889 -t 120 -o && rasa run --enable-api --cors '*' --debug --credentials /app/credentials.yml --endpoints /app/endpoints.yml --model /app/models",
+      ]
     networks:
       - chat-network
     depends_on:
       - rasa-actions
       - rasa-credentials
 
-
-# --------------------
-# Rasa actions service
-# --------------------
+  # --------------------
+  # Rasa actions service
+  # --------------------
   rasa-actions:
     build:
       context: ./app/rasa
@@ -97,10 +90,9 @@ services:
     networks:
       - chat-network
 
-
-# -------------------------------
-# Rasa credentials helper service
-# -------------------------------
+  # -------------------------------
+  # Rasa credentials helper service
+  # -------------------------------
   rasa-credentials:
     build:
       context: ./app/rasa-credentials
@@ -120,10 +112,9 @@ services:
       interval: 15s
       retries: 5
 
-
-# -------------------------
-# Postgres database service
-# -------------------------
+  # -------------------------
+  # Postgres database service
+  # -------------------------
   db:
     build:
       context: ./app/db
@@ -144,10 +135,9 @@ services:
     networks:
       - chat-network
 
-
-# --------------------------------
-# PgAdmin database browser service
-# --------------------------------
+  # --------------------------------
+  # PgAdmin database browser service
+  # --------------------------------
   pgadmin:
     container_name: chat_pgadmin
     image: dpage/pgadmin4
@@ -155,9 +145,9 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
-       - ./mnt/pgadmin:/var/lib/pgadmin
+      - ./mnt/pgadmin:/var/lib/pgadmin
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     restart: unless-stopped
@@ -166,10 +156,9 @@ services:
     networks:
       - chat-network
 
-
-# ----------------------------
-# Container log viewer service
-# ----------------------------
+  # ----------------------------
+  # Container log viewer service
+  # ----------------------------
   dozzle:
     container_name: chat_dozzle
     image: amir20/dozzle:latest
