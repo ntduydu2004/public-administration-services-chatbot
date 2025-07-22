@@ -1,9 +1,8 @@
-.PHONY: default banner install install-seed seed run stop db-purge api-install env-create env db db-stop api api-stop
+.PHONY: default install install-seed seed run stop db-purge api-install env-create env db db-stop api api-stop
 SHELL := /bin/bash 
 default: help
 
 help:
-	make banner
 	@echo "+------------------+"
 	@echo "| 🏠 CORE COMMANDS |"
 	@echo "+------------------+"
@@ -14,14 +13,6 @@ help:
 	@echo "make stop - Stop database and API server"
 	@echo "make db-purge - Delete all data in database\n"
 
-banner:
-	@echo "\n\n-------------------------------------"
-	@echo "▒█▀▀█ █▀▀█ █▀▀ █▀▀█ ▒█▀▀█ ▒█▀▀█ ▀▀█▀▀"
-	@echo "▒█▄▄▀ █▄▄█ ▀▀█ █▄▄█ ▒█░▄▄ ▒█▄▄█ ░▒█░░"
-	@echo "▒█░▒█ ▀░░▀ ▀▀▀ ▀░░▀ ▒█▄▄█ ▒█░░░ ░▒█░░"
-	@echo "+-----------------------------------+"
-	@echo "|       🤖 FastAPI LLM server       |"
-	@echo "+-----------------------------------+\n\n"
 
 # ================
 # 🏠 CORE COMMANDS
@@ -31,7 +22,6 @@ banner:
 # Setup environment and build models
 # ----------------------------------
 install:
-	@make banner
 	@make api-install
 	@make db-stop
 	@echo "✅ Installation complete. Run 'make run' to start services.\n"
@@ -40,7 +30,6 @@ install:
 # Setup environment and build models and seed DB
 # ----------------------------------------------
 install-seed:
-	@make banner
 	@make api-install
 	@make seed
 	@make db-stop
@@ -48,7 +37,6 @@ install-seed:
 
 
 seed:
-	@make banner
 	@echo "🌱 Seeding database ..\n"
 	@python3 seed.py
 
@@ -56,7 +44,6 @@ seed:
 # Run database and API server
 # ---------------------------
 run:
-	@make banner
 	@make env
 	@echo "🚀  Starting services ..\n"
 	@make db
@@ -66,7 +53,6 @@ run:
 # Stop database and API server
 # ----------------------------
 stop:
-	@make banner
 	@echo "🛑  Stopping services ..\n"
 	@make db-stop
 	@make api-stop
