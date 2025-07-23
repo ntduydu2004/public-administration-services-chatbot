@@ -36,8 +36,8 @@ metrics = [
 ]
 
 file_name = ['gpt_evaluation_results_error.xlsx', 'llama_evaluation_results_error.xlsx', 'qwen_evaluation_results_error.xlsx']
-
-eval_dataset = loadDataset(file_name[2])
+current_file = file_name[1]
+eval_dataset = loadDataset(current_file)
 
 results = evaluate(dataset=eval_dataset, metrics=metrics)
 
@@ -45,5 +45,5 @@ results_df = results.to_pandas()
 results_df['faithfulness'] = eval_dataset['faithfulness']
 results_df['answer_relevancy'] = eval_dataset['answer_relevancy']
 results_df['error'] = eval_dataset['error']
-output_file = file_name[2].replace('_evaluation_results_error.xlsx', '_context_results.csv')
+output_file = current_file.replace('_evaluation_results_error.xlsx', '_context_results.csv')
 results_df.to_csv(output_file, index=False, encoding='utf-8-sig')
