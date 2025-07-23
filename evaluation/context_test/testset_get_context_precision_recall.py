@@ -2,7 +2,6 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 from ragas.metrics import Faithfulness, ResponseRelevancy, ContextPrecision, ContextRecall
-import ast
 
 from datasets import Dataset
 
@@ -14,11 +13,6 @@ from langchain_openai import OpenAIEmbeddings
 
 def loadDataset(dataset_path: str):
     df = pd.read_excel(dataset_path)
-    def safe_literal_eval(val):
-        if isinstance(val, str) and val.strip():
-            return ast.literal_eval(val)
-        return val
-    df['retrieved_contexts'] = df['retrieved_contexts'].apply(safe_literal_eval)
     df['retrieved_contexts'] = df['retrieved_contexts'].apply(lambda x: [str(x)])
     dataset = Dataset.from_pandas(df)
     return dataset
@@ -48,4 +42,8 @@ eval_dataset = loadDataset(file_name[2])
 results = evaluate(dataset=eval_dataset, metrics=metrics)
 
 results_df = results.to_pandas()
-results_df.to_csv("qwen_evaluation_results.csv", index=False, encoding='utf-8-sig')
+results_df['faithfulness'] = eval_dataset['faithfulness']
+results_df['answer_relevancy'] = eval_dataset['answer_relevancy']
+results_df['error'] = eval_dataset['error']
+output_file = file_name[2].replace('_evaluation_results_error.xlsx', '_context_results.csv')
+results_df.to_csv(output_file, index=False, encoding='utf-8-sig')
