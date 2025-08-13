@@ -18,7 +18,6 @@ from config import (
     ENTITY_STATUS,
     FILE_UPLOAD_PATH,
     OUTPUT_HIGHLIGHT_PICTURE,
-    RASA_WEBHOOK_URL,
     TELEGRAM_ACCESS_TOKEN,
     USER_INPUT_PICTURE,
 )
@@ -511,7 +510,9 @@ def get_webhook(
     # Get webhook metadata
     # --------------------
     if channel == "telegram":
-        rasa_webhook_url = f"{RASA_WEBHOOK_URL}/webhooks/{channel}/webhook"
+        send_message_url = (
+            f"https://api.telegram.org/bot{TELEGRAM_ACCESS_TOKEN}/sendMessage"
+        )
         data = process_webhook_telegram(webhook_data)
         channel = CHANNEL_TYPE.TELEGRAM.value
         chat_id = data["chat_id"]
@@ -552,22 +553,14 @@ def get_webhook(
     meta = chat_session.meta
     images_list: list[str] = meta.get("images_list")
     is_highlight: bool = meta.get("is_highlight")
-    logger.debug(f"after chat query, meta:{meta}")
 
     # -----------------------------------------
     # Lets add the LLM response to the metadata
     # -----------------------------------------
+    response = chat_session.response
 
-    webhook_data["message"]["meta"] = {
-        "response": chat_session.response if chat_session.response else None,
-        "is_escalate": meta["is_escalate"] if "is_escalate" in meta else False,
-        "session_id": meta["session_id"] if "session_id" in meta else None,
-    }
+    res = requests.post(send_message_url, data={"chat_id": chat_id, "text": response})
 
-    res = requests.post(
-        rasa_webhook_url,
-        data=json.dumps(webhook_data),
-    )
     logger.debug(
         f"[🤖 RasaGPT API webhook]\nPosting data: {json.dumps(webhook_data)}\n\n[🤖 RasaGPT API webhook]\nTelegram response: {res.text}"
     )

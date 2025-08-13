@@ -83,7 +83,7 @@ procedures = [
     "hướng dẫn",
     "cơ quan",
     "cổng dịch vụ công",
-    "điền"
+    "điền",
 ]
 
 
@@ -228,119 +228,113 @@ def chat_query(
     if cached_metadata:
         response_message = cached_metadata["answer"]
         images_list = cached_metadata["images_list"]
+    elif check_is_highlight_query(query_str):
+        is_highlight = True
+        highlight_query(query=query_str, model=model)
     else:
-        strategy = query_router(query_str)
-        logger.debug(f"💬 Query strategy: {strategy}")
+        # ----------------
+        # Get token counts
+        # ----------------
+        query_token_count = get_token_count(query_str)
+        prompt_token_count = 0
 
-        if strategy == "None":
-            # return default response
-            response_message = "Hãy hỏi tôi về hành chính công, tôi sẽ giúp bạn tìm kiếm thông tin cần thiết."
-            is_escalate = True
-        else:
-            # ----------------
-            # Get token counts
-            # ----------------
-            query_token_count = get_token_count(query_str)
-            prompt_token_count = 0
+        # -----------------------
+        # Create input embeddings
+        # -----------------------
+        _, embeddings = get_embeddings(query_str)
 
-            # -----------------------
-            # Create input embeddings
-            # -----------------------
-            _, embeddings = get_embeddings(query_str)
+        query_embeddings = embeddings[0]
 
-            query_embeddings = embeddings[0]
+        # ------------------------
+        # Search for similar nodes
+        # ------------------------
+        nodes = get_nodes_by_embedding(
+            query_embeddings,
+            node_limit,
+            distance_strategy=distance_strategy
+            if isinstance(distance_strategy, DISTANCE_STRATEGY)
+            else LLM_DEFAULT_DISTANCE_STRATEGY,
+            distance_threshold=distance_threshold,
+            session=session,
+        )
 
-            # ------------------------
-            # Search for similar nodes
-            # ------------------------
-            nodes = get_nodes_by_embedding(
-                query_embeddings,
-                node_limit,
-                distance_strategy=distance_strategy
-                if isinstance(distance_strategy, DISTANCE_STRATEGY)
-                else LLM_DEFAULT_DISTANCE_STRATEGY,
-                distance_threshold=distance_threshold,
-                session=session,
+        if len(nodes) > 0:
+            if (not project or not organization) and session:
+                # get document from Node via session object:
+                document = session.get(Node, nodes[0].id).document
+                project = document.project
+                organization = project.organization
+
+            # ----------------------
+            # Create prompt template
+            # ----------------------
+
+            # concatenate all nodes into a single string
+            context_str = "\n\n".join([node.text for node in nodes])
+
+            # -------------------------------------------
+            # Let's make sure we don't exceed token limit
+            # -------------------------------------------
+            context_token_count = get_token_count(context_str)
+
+            # ----------------------------------------------
+            # if token count exceeds limit, truncate context
+            # ----------------------------------------------
+            if (
+                context_token_count + query_token_count + prompt_token_count
+            ) > MODEL_TOKEN_LIMIT:
+                logger.debug("🚧 Exceeded token limit, truncating context")
+                token_delta = MODEL_TOKEN_LIMIT - (
+                    query_token_count + prompt_token_count
+                )
+                context_str = context_str[:token_delta]
+
+            # create prompt template
+            system_prompt, user_prompt = get_prompt_template(
+                user_query=query_str,
+                context_str=context_str,
+                project=project,
+                organization=organization,
+                agent=agent_name,
             )
 
-            if len(nodes) > 0:
-                if (not project or not organization) and session:
-                    # get document from Node via session object:
-                    document = session.get(Node, nodes[0].id).document
-                    project = document.project
-                    organization = project.organization
+            prompt_token_count = get_token_count(prompt)
+            token_count = context_token_count + query_token_count + prompt_token_count
 
-                # ----------------------
-                # Create prompt template
-                # ----------------------
-
-                # concatenate all nodes into a single string
-                context_str = "\n\n".join([node.text for node in nodes])
-
-                # -------------------------------------------
-                # Let's make sure we don't exceed token limit
-                # -------------------------------------------
-                context_token_count = get_token_count(context_str)
-
-                # ----------------------------------------------
-                # if token count exceeds limit, truncate context
-                # ----------------------------------------------
-                if (
-                    context_token_count + query_token_count + prompt_token_count
-                ) > MODEL_TOKEN_LIMIT:
-                    logger.debug("🚧 Exceeded token limit, truncating context")
-                    token_delta = MODEL_TOKEN_LIMIT - (
-                        query_token_count + prompt_token_count
-                    )
-                    context_str = context_str[:token_delta]
-
-                # create prompt template
-                system_prompt, user_prompt = get_prompt_template(
-                    user_query=query_str,
-                    context_str=context_str,
-                    project=project,
-                    organization=organization,
-                    agent=agent_name,
+            # ---------------------------
+            # Get response from LLM model
+            # ---------------------------
+            # It should return a JSON dict
+            llm_response = json.loads(
+                retrieve_llm_response(
+                    user_prompt,
+                    model=model,
+                    prefix_messages=system_prompt,
                 )
+            )
+            is_escalate = llm_response.get("is_escalate", False)
+            images_list = llm_response.get("images_list", [])
+            response_message = llm_response.get("message", None)
+            is_highlight_string = llm_response.get("message", None)
+            if is_highlight_string and is_highlight_string.lower() == "true":
+                is_highlight = True
 
-                prompt_token_count = get_token_count(prompt)
-                token_count = (
-                    context_token_count + query_token_count + prompt_token_count
+            logger.debug(f"LLM response: {llm_response}")
+
+            if ENABLE_CACHE_ANSWER and not is_highlight:
+                store_answered_question(
+                    question=query_str,
+                    answer=response_message,
+                    images_list=images_list,
                 )
+            logger.debug(f"LLM response: {str(response_message)}")
+        else:
+            logger.info("🚫📝 No similar nodes found, returning default response")
+            response_message = "Xin lỗi, tôi không có đủ thông tin để hỗ trợ bạn"
+            is_escalate = True
 
-                # ---------------------------
-                # Get response from LLM model
-                # ---------------------------
-                # It should return a JSON dict
-                llm_response = json.loads(
-                    retrieve_llm_response(
-                        user_prompt,
-                        model=model,
-                        prefix_messages=system_prompt,
-                    )
-                )
-                is_escalate = llm_response.get("is_escalate", False)
-                images_list = llm_response.get("images_list", [])
-                response_message = llm_response.get("message", None)
-                is_highlight = llm_response.get("message", None)
-
-                if ENABLE_CACHE_ANSWER and not is_highlight:
-                    store_answered_question(
-                        question=query_str,
-                        answer=response_message,
-                        images_list=images_list,
-                    )
-                logger.debug(f"LLM response: {str(response_message)}")
-            else:
-                logger.info("🚫📝 No similar nodes found, returning default response")
-                response_message = "Xin lỗi, tôi không thể hỗ trợ bạn."
-                is_escalate = True
-
-    chat_history[user.identifier].chat_memory.add_user_message(user_message)
-    chat_history[user.identifier].chat_memory.add_ai_message(response_message)
-
-    if is_highlight:
-        highlight_query(query=query_str, model=model)
+        chat_history[user.identifier].chat_memory.add_user_message(user_message)
+        chat_history[user.identifier].chat_memory.add_ai_message(response_message)
 
     # -----------------------------------
     # Calculate input and response tokens
@@ -391,6 +385,22 @@ def get_random_agent():
     return random.choice(AGENT_NAMES)
 
 
+def check_is_highlight_query(user_query: str):
+    system_prompt = get_query_prompt_template(user_query)
+    llm = OpenAI(
+        temperature=0,
+        model_name="gpt-4.1-nano",
+        prefix_messages=system_prompt,
+    )
+
+    check_prompt = "Please check if the user needs form filling guidance or not"
+    response = llm(prompt=check_prompt)
+
+    if response and response.lower() == "true":
+        return True
+    return False
+
+
 # ------------------------
 # Retrieve prompt template
 # ------------------------
@@ -432,18 +442,46 @@ Given the following document from "{organization}", I will answer the [USER] que
 I will answer the user's questions using only the [DOCUMENT] provided. I will abide by the following rules:
 - I am a kind and helpful human, the best customer support agent in existence
 - I never lie or invent answers not explicitly provided in [DOCUMENT]
-- If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "Xin lỗi, tôi không thể hỗ trợ bạn trong lĩnh vực này.".
+- If I am unsure of the answer response or the answer is not explicitly contained in [DOCUMENT], I will say: "Xin lỗi, tôi không có đủ thông tin để hỗ trợ bạn".
 - I will always respond in JSON format with the following keys:
   + "message" my full, clear, concise answer in Vietnamese based only on the [DOCUMENT]; it must not contain image links/paths. If the question is to highlight or guide instructions at certain areas in an image, jjust give a simple reply like: "Đây là các vị trí cần điền thông tin: "
   + "is_escalate" a boolean, returning false if I am unsure and true if I do have a relevant answer
-  + "images_list" a list of image URLs or file paths from the [DOCUMENT] that are relevant to the users question; they serve as visual aids but never as replacements for "message".
-  + "is_highlight" a boolean, returning true if the question is to highlight or to guide instructions at certain areas in a given picture.
-- I will only answer in Vietnamese
+  + "images_list" a list of image URLs or file paths from the [DOCUMENT] that are relevant to the user's question, they serve as visual aids but never as replacements for "message".
+- I will only answer in Vietnamese.
 """,
         }
     ]
 
     return (system_prompt, f"[USER]:\n{user_query}")
+
+
+def get_query_prompt_template(
+    user_query: str = None,
+) -> str:
+    user_query = user_query if user_query else ""
+
+    system_prompt = [
+        {
+            "role": "system",
+            "content": f""":
+You are classifying a user query to determine if the user needs guidance to fill in a given form or not
+- Return a boolean value if the user needs guidance to fill in the form
+
+Example 1:
+    user query: Hãy chỉ cho tôi vùng để điển thông tin về họ và tên
+    response: True
+    
+Example 2:
+    user query: Hãy chỉ cho tôi vùng để điền thông tin về số điện thoại
+    response: True
+
+Current user message:
+"{user_query}"
+""",
+        }
+    ]
+
+    return system_prompt
 
 
 # ----------------------------
